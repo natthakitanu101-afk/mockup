@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OWND Color System — Corrected from UI Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Kanit', sans-serif;
+    background: #f5f5f0;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  .page {
+    background: #fff;
+    max-width: 1100px;
+    margin: 0 auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+
+  /* Header */
+  .header { background: #f0efeb; padding: 20px 48px 0; }
+  .header-inner {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 12px; border-bottom: 3px solid #00704C;
+  }
+  .header-label { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; }
+  .header-sub { font-size: 13px; font-weight: 500; color: #00704C; }
+
+  .content { padding: 48px; }
+
+  /* Intro Banner */
+  .intro-banner {
+    background: linear-gradient(135deg, #083538 0%, #0A2633 100%);
+    border-radius: 12px;
+    padding: 32px;
+    color: #fff;
+    margin-bottom: 48px;
+  }
+  .intro-banner h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+  .intro-banner p { font-size: 14px; font-weight: 400; opacity: 0.8; line-height: 1.7; }
+
+  /* Section */
+  .section { margin-bottom: 56px; }
+  .section:last-child { margin-bottom: 0; }
+
+  .section-header {
+    display: flex; align-items: flex-start; gap: 32px; margin-bottom: 20px;
+  }
+  .section-info { min-width: 200px; max-width: 240px; flex-shrink: 0; }
+  .section-title { font-size: 22px; font-weight: 700; line-height: 1.3; margin-bottom: 6px; }
+  .section-desc { font-size: 13px; font-weight: 400; color: #757575; line-height: 1.7; }
+  .swatch-area { flex: 1; }
+
+  .section-role {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 4px; margin-bottom: 8px;
+  }
+  .role-brand { background: #E6F5EC; color: #00704C; }
+  .role-semantic { background: #EFF6FF; color: #2563EB; }
+  .role-layout { background: #F5F5F5; color: #616161; }
+
+  /* Divider */
+  .divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 48px 0 24px;
+  }
+  .divider .label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #9E9E9E; white-space: nowrap;
+  }
+  .divider .line { flex: 1; height: 1px; background: #eee; }
+
+  /* Swatch Row */
+  .swatch-row {
+    display: grid; gap: 0; margin-bottom: 4px;
+  }
+  .cols-5 { grid-template-columns: repeat(5, 1fr); }
+  .cols-10 { grid-template-columns: repeat(5, 1fr); }
+  .cols-2 { grid-template-columns: 1fr 1fr; }
+
+  .sw {
+    position: relative; min-height: 80px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 10px 12px;
+  }
+  .sw:first-child { border-radius: 8px 0 0 8px; }
+  .sw:last-child { border-radius: 0 8px 8px 0; }
+
+  .sw-tall { min-height: 100px; }
+  .sw-name { font-size: 11px; font-weight: 600; line-height: 1.3; }
+  .sw-hex { font-size: 10px; font-weight: 400; opacity: 0.8; }
+  .sw-use { font-size: 9px; font-weight: 500; opacity: 0.65; margin-top: 2px; line-height: 1.3; }
+  .sw.lt .sw-name, .sw.lt .sw-hex, .sw.lt .sw-use { color: #fff; }
+  .sw.dk .sw-name, .sw.dk .sw-hex, .sw.dk .sw-use { color: #1a1a1a; }
+
+  /* Badge */
+  .badge {
+    position: absolute; top: 6px; right: 6px;
+    font-size: 8px; font-weight: 700; letter-spacing: 0.04em;
+    padding: 2px 6px; border-radius: 3px; line-height: 1.3;
+  }
+  .badge-pass { background: rgba(255,255,255,0.9); color: #0F766E; }
+  .badge-large { background: rgba(255,255,255,0.9); color: #D97706; }
+  .badge-fail { background: rgba(255,255,255,0.85); color: #CC0000; }
+  .badge-base { background: rgba(255,255,255,0.85); color: #083538; }
+  .badge-pass-dk { background: rgba(0,0,0,0.1); color: #0F766E; }
+  .badge-fail-dk { background: rgba(0,0,0,0.1); color: #CC0000; }
+
+  .sw-outline { border: 1.5px solid #E0E0E0; }
+
+  /* Issue Card */
+  .issue-card {
+    border-radius: 10px; padding: 20px; margin-bottom: 12px;
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .issue-card.error { background: #FFF5F5; border-left: 4px solid #CC0000; }
+  .issue-card.fixed { background: #F0FDFA; border-left: 4px solid #14B8A6; }
+  .issue-card.info { background: #FFFBEB; border-left: 4px solid #F59E0B; }
+  .issue-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .issue-icon.err { background: #FFCCCC; color: #CC0000; }
+  .issue-icon.fix { background: #CCFBF1; color: #0F766E; }
+  .issue-icon.warn { background: #FEF3C7; color: #D97706; }
+  .issue-text h4 { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+  .issue-text p { font-size: 13px; color: #616161; line-height: 1.6; }
+  .issue-text code {
+    font-family: monospace; font-size: 12px;
+    background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px;
+  }
+
+  /* Usage Map */
+  .usage-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 12px; margin-top: 16px;
+  }
+  .usage-card {
+    border-radius: 10px; padding: 20px;
+    min-height: 110px; display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .usage-label { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .usage-hex { font-size: 11px; font-weight: 400; opacity: 0.7; }
+  .usage-role { font-size: 10px; font-weight: 500; margin-bottom: 8px; opacity: 0.6; }
+
+  /* Contrast Table */
+  .ctable {
+    width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 13px;
+  }
+  .ctable th {
+    text-align: left; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    color: #9E9E9E; padding: 8px 12px; border-bottom: 2px solid #eee;
+  }
+  .ctable td {
+    padding: 10px 12px; border-bottom: 1px solid #f5f5f5; vertical-align: middle;
+  }
+  .ct-sw {
+    display: inline-block; width: 18px; height: 18px;
+    border-radius: 4px; vertical-align: middle; margin-right: 8px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  .ct-r { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .ct-pass { color: #0F766E; }
+  .ct-warn { color: #D97706; }
+  .ct-fail { color: #CC0000; }
+  .ct-b {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 2px 6px; border-radius: 3px;
+  }
+  .ct-b-pass { background: #F0FDFA; color: #0F766E; }
+  .ct-b-large { background: #FFFBEB; color: #D97706; }
+  .ct-b-fail { background: #FFF5F5; color: #CC0000; }
+
+  /* Footer */
+  .footer-note {
+    padding: 24px 48px; background: #fafaf8; border-top: 1px solid #eee;
+  }
+  .footer-note p { font-size: 13px; font-weight: 400; color: #888; line-height: 1.7; }
+  .footer-note strong { font-weight: 600; color: #666; }
+
+  @media (max-width: 860px) {
+    .section-header { flex-direction: column; gap: 12px; }
+    .section-info { max-width: 100%; }
+    .usage-grid { grid-template-columns: repeat(2, 1fr); }
+    .content { padding: 24px; }
+    .header, .footer-note { padding-left: 24px; padding-right: 24px; }
+  }
+  @media (max-width: 520px) {
+    .cols-5 { grid-template-columns: repeat(3, 1fr); }
+    .usage-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="header">
+    <div class="header-inner">
+      <span class="header-label">COLOR SYSTEM — UI AUDIT</span>
+      <span class="header-sub">สีที่วัดจาก UI จริง → ปรับให้ถูกต้อง</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══ INTRO ═══ -->
+    <div class="intro-banner">
+      <h2>สิ่งที่พบจากการวิเคราะห์ UI จริง</h2>
+      <p>วัดสีจาก 3 หน้าหลัก (Homepage, Matching-Buyer, Matching-Investor) ด้วย pixel sampling พบว่ามี <strong>3 ปัญหาที่ต้องแก้</strong> และ <strong>1 สีที่ขาดหายไป</strong> จาก Color System เดิม</p>
+    </div>
+
+    <!-- ═══ ISSUES FOUND ═══ -->
+    <div class="section">
+      <div class="section-title" style="color:#CC0000; font-size:20px; margin-bottom:20px;">ปัญหาที่พบ & การแก้ไข</div>
+
+      <div class="issue-card error">
+        <div class="issue-icon err">!</div>
+        <div class="issue-text">
+          <h4>CTA Button <code>#3DB140</code> บน White ไม่ผ่าน WCAG</h4>
+          <p>ปุ่ม CTA หลัก (เช่น "ลงทะเบียนเลย") ใช้ <code>#3DB140</code> บนพื้นขาว contrast ratio = <strong>2.8:1</strong> ❌ ต้องการ 4.5:1 — แก้โดยใช้ <code>#00704C</code> (Green-500) สำหรับ CTA บน white และใช้ <code>#3DB140</code> เฉพาะบน dark bg เท่านั้น</p>
+        </div>
+      </div>
+
+      <div class="issue-card info">
+        <div class="issue-icon warn">+</div>
+        <div class="issue-text">
+          <h4>Warm Neutral <code>#FAF3ED</code> ไม่มีใน System</h4>
+          <p>หน้า Matching ใช้พื้นหลังสี beige/cream (#FAF3ED) ในส่วน "ทำไมเช่าเพื่อซื้อกับ OWND" แต่ไม่มีใน Color System เดิม — เพิ่มเป็น <code>warm-50</code> token</p>
+        </div>
+      </div>
+
+      <div class="issue-card fixed">
+        <div class="issue-icon fix">✓</div>
+        <div class="issue-text">
+          <h4>Dark Background = <code>#083538</code> ไม่ใช่ <code>#0A2633</code></h4>
+          <p>Section สีเข้ม (Nav, Plan cards, Article, Footer) ทุกจุดใช้ <code>#083538</code> เป็นหลัก ไม่ใช่ #0A2633 ที่เคยตั้งเป็น Green-900 — ปรับ token ให้ตรง</p>
+        </div>
+      </div>
+
+      <div class="issue-card fixed">
+        <div class="issue-icon fix">✓</div>
+        <div class="issue-text">
+          <h4>Tab Active / Card Green = <code>#026348</code></h4>
+          <p>Tab Buyer/Investor active state และ Investment card background ใช้ #026348–#016548 ซึ่งอยู่ระหว่าง Green-500 กับ Green-600 — จัดเข้า token <code>Green-600</code></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PRIMARY (CORRECTED) ═══ -->
+    <div class="divider">
+      <span class="label">Corrected Palette</span>
+      <span class="line"></span>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-info">
+          <span class="section-role role-brand">Brand</span>
+          <div class="section-title" style="color:#00704C;">Primary</div>
+          <p class="section-desc">Green palette ปรับตามสีจริงในเว็บ โดย Green-500 เป็น base สำหรับ CTA บน white, Green-300 ใช้ได้เฉพาะบน dark bg</p>
+        </div>
+        <div class="swatch-area">
+          <div class="swatch-row cols-5">
+            <div class="sw dk" style="background:#E6F5EC;">
+              <span class="badge badge-pass-dk">BG tint</span>
+              <span class="sw-name">Green-50</span>
+              <span class="sw-hex">#E6F5EC</span>
+              <span class="sw-use">Selected state, Badge bg</span>
+            </div>
+            <div class="sw dk" style="background:#79F233;">
+              <span class="badge badge-fail-dk">❌ 1.9:1</span>
+              <span class="sw-name">Green-100</span>
+              <span class="sw-hex">#79F233</span>
+              <span class="sw-use">Decorative only</span>
+            </div>
+            <div class="sw dk" style="background:#5BD239;">
+              <span class="badge badge-fail-dk">❌ 2.8:1</span>
+              <span class="sw-name">Green-200</span>
+              <span class="sw-hex">#5BD239</span>
+              <span class="sw-use">Decorative only</span>
+            </div>
+            <div class="sw lt" style="background:#3DB140;">
+              <span class="badge badge-fail">❌ 2.8:1 on ⬜</span>
+              <span class="sw-name">Green-300</span>
+              <span class="sw-hex">#3DB140</span>
+              <span class="sw-use">CTA on dark bg ONLY</span>
+            </div>
+            <div class="sw lt" style="background:#1E9146;">
+              <span class="badge badge-large">⚠ 4.0:1</span>
+              <span class="sw-name">Green-400</span>
+              <span class="sw-hex">#1E9146</span>
+              <span class="sw-use">Large text on white</span>
+            </div>
+          </div>
+          <div class="swatch-row cols-5" style="margin-top:4px;">
+            <div class="sw lt sw-tall" style="background:#00704C;">
+              <span class="badge badge-pass">✓ 6.1:1 · CTA BASE</span>
+              <span class="sw-name">Green-500</span>
+              <span class="sw-hex">#00704C</span>
+              <span class="sw-use">CTA บน white, Link</span>
+            </div>
+            <div class="sw lt" style="background:#026348;">
+              <span class="badge badge-pass">✓ 7.3:1</span>
+              <span class="sw-name">Green-600</span>
+              <span class="sw-hex">#026348</span>
+              <span class="sw-use">Tab active, Card bg</span>
+            </div>
+            <div class="sw lt" style="background:#045242;">
+              <span class="badge badge-pass">✓ AAA</span>
+              <span class="sw-name">Green-700</span>
+              <span class="sw-hex">#045242</span>
+              <span class="sw-use">Hover state</span>
+            </div>
+            <div class="sw lt sw-tall" style="background:#083538;">
+              <span class="badge badge-pass">✓ 13.3:1 · DARK BG</span>
+              <span class="sw-name">Green-800</span>
+              <span class="sw-hex">#083538</span>
+              <span class="sw-use">Dark section, Nav, Footer</span>
+            </div>
+            <div class="sw lt" style="background:#0A2633;">
+              <span class="badge badge-pass">✓ 15.7:1</span>
+              <span class="sw-name">Green-900</span>
+              <span class="sw-hex">#0A2633</span>
+              <span class="sw-use">Heading text, Darkest</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ NEUTRAL ═══ -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-info">
+          <span class="section-role role-layout">Layout</span>
+          <div class="section-title" style="color:#616161;">Neutral</div>
+          <p class="section-desc">เพิ่ม Warm-50 (#FAF3ED) สำหรับ section bg อุ่นที่ใช้ใน Matching page และขยาย Gray ถึง 900</p>
+        </div>
+        <div class="swatch-area">
+          <div class="swatch-row cols-5">
+            <div class="sw dk sw-outline" style="background:#FFFFFF;">
+              <span class="sw-name">White</span>
+              <span class="sw-hex">#FFFFFF</span>
+              <span class="sw-use">Page bg, Card</span>
+            </div>
+            <div class="sw dk" style="background:#FAF3ED;">
+              <span class="badge badge-pass-dk" style="font-size:7px;">WARM · ใหม่</span>
+              <span class="sw-name">Warm-50</span>
+              <span class="sw-hex">#FAF3ED</span>
+              <span class="sw-use">"ทำไม OWND" section</span>
+            </div>
+            <div class="sw dk" style="background:#FAFAFA;">
+              <span class="sw-name">Gray-50</span>
+              <span class="sw-hex">#FAFAFA</span>
+              <span class="sw-use">Page alt bg</span>
+            </div>
+            <div class="sw dk" style="background:#F5F5F5;">
+              <span class="sw-name">Gray-100</span>
+              <span class="sw-hex">#F5F5F5</span>
+              <span class="sw-use">Input bg</span>
+            </div>
+            <div class="sw dk" style="background:#EEEEEE;">
+              <span class="sw-name">Gray-200</span>
+              <span class="sw-hex">#EEEEEE</span>
+              <span class="sw-use">Divider</span>
+            </div>
+          </div>
+          <div class="swatch-row cols-5" style="margin-top:4px;">
+            <div class="sw dk" style="background:#E0E0E0;">
+              <span class="sw-name">Gray-300</span>
+              <span class="sw-hex">#E0E0E0</span>
+              <span class="sw-use">Border</span>
+            </div>
+            <div class="sw dk" style="background:#BDBDBD;">
+              <span class="sw-name">Gray-400</span>
+              <span class="sw-hex">#BDBDBD</span>
+              <span class="sw-use">Disabled icon</span>
+            </div>
+            <div class="sw lt" style="background:#9E9E9E;">
+              <span class="sw-name">Gray-500</span>
+              <span class="sw-hex">#9E9E9E</span>
+              <span class="sw-use">Placeholder</span>
+            </div>
+            <div class="sw lt" style="background:#757575;">
+              <span class="badge badge-pass">✓ AA text</span>
+              <span class="sw-name">Gray-600</span>
+              <span class="sw-hex">#757575</span>
+              <span class="sw-use">Secondary text</span>
+            </div>
+            <div class="sw lt" style="background:#424242;">
+              <span class="badge badge-pass">✓ AAA</span>
+              <span class="sw-name">Gray-800</span>
+              <span class="sw-hex">#424242</span>
+              <span class="sw-use">Body text</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SEMANTIC ═══ -->
+    <div class="divider">
+      <span class="label">Semantic Colors — สถานะระบบ</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- Error -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-info">
+          <span class="section-role role-semantic">Semantic</span>
+          <div class="section-title" style="color:#CC0000;">Error</div>
+          <p class="section-desc">ข้อผิดพลาด เช่น กรอกข้อมูลผิด eKYC ไม่ผ่าน การทำรายการล้มเหลว</p>
+        </div>
+        <div class="swatch-area">
+          <div class="swatch-row cols-5">
+            <div class="sw dk" style="background:#FFF5F5;"><span class="sw-name">Red-50</span><span class="sw-hex">#FFF5F5</span></div>
+            <div class="sw dk" style="background:#FFCCCC;"><span class="sw-name">Red-100</span><span class="sw-hex">#FFCCCC</span></div>
+            <div class="sw lt" style="background:#FF6666;"><span class="sw-name">Red-300</span><span class="sw-hex">#FF6666</span></div>
+            <div class="sw lt" style="background:#CC0000;"><span class="badge badge-pass">✓ BASE</span><span class="sw-name">Red-500</span><span class="sw-hex">#CC0000</span></div>
+            <div class="sw lt" style="background:#7A0000;"><span class="sw-name">Red-700</span><span class="sw-hex">#7A0000</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warning -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-info">
+          <span class="section-role role-semantic">Semantic</span>
+          <div class="section-title" style="color:#D97706;">Warning</div>
+          <p class="section-desc">สถานะรอดำเนินการ เอกสารรอตรวจ สัญญาใกล้หมด Pending state</p>
+        </div>
+        <div class="swatch-area">
+          <div class="swatch-row cols-5">
+            <div class="sw dk" style="background:#FFFBEB;"><span class="sw-name">Amber-50</span><span class="sw-hex">#FFFBEB</span></div>
+            <div class="sw dk" style="background:#FEF3C7;"><span class="sw-name">Amber-100</span><span class="sw-hex">#FEF3C7</span></div>
+            <div class="sw dk" style="background:#FCD34D;"><span class="sw-name">Amber-300</span><span class="sw-hex">#FCD34D</span></div>
+            <div class="sw lt" style="background:#F59E0B;"><span class="badge badge-pass">✓ BASE</span><span class="sw-name">Amber-500</span><span class="sw-hex">#F59E0B</span></div>
+            <div class="sw lt" style="background:#B45309;"><span class="sw-name">Amber-700</span><span class="sw-hex">#B45309</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-info">
+          <span class="section-role role-semantic">Semantic</span>
+          <div class="section-title" style="color:#0F766E;">Success</div>
+          <p class="section-desc">สถานะสำเร็จ eKYC ผ่าน Matching เสร็จ — ใช้ Teal แยก hue จาก brand green</p>
+        </div>
+        <div class="swatch-area">
+          <div class="swatch-row cols-5">
+            <div class="sw dk" style="background:#F0FDFA;"><span class="sw-name">Teal-50</span><span class="sw-hex">#F0FDFA</span></div>
+            <div class="sw dk" style="background:#CCFBF1;"><span class="sw-name">Teal-100</span><span class="sw-hex">#CCFBF1</span></div>
+            <div class="sw dk" style="background:#5EEAD4;"><span class="sw-name">Teal-300</span><span class="sw-hex">#5EEAD4</span></div>
+            <div class="sw lt" style="background:#14B8A6;"><span class="badge badge-pass">✓ BASE</span><span class="sw-name">Teal-500</span><span class="sw-hex">#14B8A6</span></div>
+            <div class="sw lt" style="background:#0F766E;"><span class="sw-name">Teal-700</span><span class="sw-hex">#0F766E</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CTA USAGE RULE ═══ -->
+    <div class="divider">
+      <span class="label">CTA Color Rule — กฏสำคัญที่สุด</span>
+      <span class="line"></span>
+    </div>
+
+    <div class="section">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px;">
+        <!-- ON WHITE -->
+        <div style="background:#fff;border:2px solid #E0E0E0;border-radius:12px;padding:24px;text-align:center;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#9E9E9E;margin-bottom:16px;">CTA บนพื้นขาว</div>
+          <div style="display:inline-block;background:#00704C;color:#fff;padding:12px 32px;border-radius:8px;font-size:16px;font-weight:600;margin-bottom:12px;">ลงทะเบียนเลย</div>
+          <div style="font-size:13px;color:#0F766E;font-weight:600;">✓ Green-500 · #00704C</div>
+          <div style="font-size:12px;color:#757575;margin-top:4px;">Contrast 6.1:1 — ผ่าน AA</div>
+        </div>
+        <!-- ON DARK -->
+        <div style="background:#083538;border-radius:12px;padding:24px;text-align:center;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:16px;">CTA บนพื้นเข้ม</div>
+          <div style="display:inline-block;background:#3DB140;color:#fff;padding:12px 32px;border-radius:8px;font-size:16px;font-weight:600;margin-bottom:12px;">ลงทะเบียนเลย</div>
+          <div style="font-size:13px;color:#5EEAD4;font-weight:600;">✓ Green-300 · #3DB140</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:4px;">Contrast 4.8:1 — ผ่าน AA</div>
+        </div>
+      </div>
+
+      <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:20px;">
+        <div style="font-size:14px;font-weight:600;color:#92400E;margin-bottom:8px;">สรุป: สีเดียวไม่พอ — ต้องมี CTA คู่</div>
+        <div style="font-size:13px;color:#78350F;line-height:1.7;">
+          ปัจจุบันเว็บใช้ <strong>#3DB140</strong> เป็น CTA ทั้ง 2 พื้นหลัง ซึ่งบนพื้นขาว contrast ไม่ผ่าน WCAG AA
+          วิธีแก้: กำหนด token <code>--color-cta-on-light: #00704C</code> และ <code>--color-cta-on-dark: #3DB140</code> แล้ว component เลือกใช้ตาม context
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ USAGE MAP ═══ -->
+    <div class="divider">
+      <span class="label">Usage Map — สีที่ใช้ในจุดสำคัญ</span>
+      <span class="line"></span>
+    </div>
+
+    <div class="section">
+      <div class="usage-grid">
+        <div class="usage-card" style="background:#083538;color:#fff;">
+          <div class="usage-role">Nav · Footer · Dark Section</div>
+          <div class="usage-label">Green-800</div>
+          <div class="usage-hex">#083538 · 13.3:1 ✓</div>
+        </div>
+        <div class="usage-card" style="background:#00704C;color:#fff;">
+          <div class="usage-role">CTA on White · Link</div>
+          <div class="usage-label">Green-500</div>
+          <div class="usage-hex">#00704C · 6.1:1 ✓</div>
+        </div>
+        <div class="usage-card" style="background:#3DB140;color:#fff;">
+          <div class="usage-role">CTA on Dark · Accent</div>
+          <div class="usage-label">Green-300</div>
+          <div class="usage-hex">#3DB140 · 4.8:1 on dark ✓</div>
+        </div>
+        <div class="usage-card" style="background:#026348;color:#fff;">
+          <div class="usage-role">Tab Active · Card bg</div>
+          <div class="usage-label">Green-600</div>
+          <div class="usage-hex">#026348 · 7.3:1 ✓</div>
+        </div>
+        <div class="usage-card" style="background:#0A2633;color:#fff;">
+          <div class="usage-role">Heading Text</div>
+          <div class="usage-label">Green-900</div>
+          <div class="usage-hex">#0A2633 · 15.7:1 ✓</div>
+        </div>
+        <div class="usage-card" style="background:#424242;color:#fff;">
+          <div class="usage-role">Body Text</div>
+          <div class="usage-label">Gray-800</div>
+          <div class="usage-hex">#424242 · 9.7:1 ✓</div>
+        </div>
+        <div class="usage-card" style="background:#FAF3ED;color:#424242;">
+          <div class="usage-role">"ทำไม OWND" Section bg</div>
+          <div class="usage-label">Warm-50</div>
+          <div class="usage-hex">#FAF3ED</div>
+        </div>
+        <div class="usage-card" style="background:#FFFFFF;color:#424242;border:1.5px solid #E0E0E0;">
+          <div class="usage-role">Page bg · Card</div>
+          <div class="usage-label">White</div>
+          <div class="usage-hex">#FFFFFF</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CONTRAST TABLE ═══ -->
+    <div class="divider">
+      <span class="label">WCAG Contrast Reference</span>
+      <span class="line"></span>
+    </div>
+
+    <div class="section">
+      <table class="ctable">
+        <thead>
+          <tr><th>คู่สี</th><th>Foreground</th><th>Background</th><th>Ratio</th><th>WCAG AA</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="ct-sw" style="background:#0A2633;"></span>Heading on White</td>
+            <td>Green-900</td><td>White</td>
+            <td class="ct-r ct-pass">15.7:1</td>
+            <td><span class="ct-b ct-b-pass">Pass</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-sw" style="background:#424242;"></span>Body on White</td>
+            <td>Gray-800</td><td>White</td>
+            <td class="ct-r ct-pass">9.7:1</td>
+            <td><span class="ct-b ct-b-pass">Pass</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-sw" style="background:#00704C;"></span>CTA on White</td>
+            <td>Green-500</td><td>White</td>
+            <td class="ct-r ct-pass">6.1:1</td>
+            <td><span class="ct-b ct-b-pass">Pass</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-sw" style="background:#fff;border:1px solid #ddd;"></span>White on Dark</td>
+            <td>White</td><td>Green-800</td>
+            <td class="ct-r ct-pass">13.3:1</td>
+            <td><span class="ct-b ct-b-pass">Pass</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-sw" style="background:#3DB140;"></span>CTA on Dark</td>
+            <td>Green-300</td><td>Green-800</td>
+            <td class="ct-r ct-pass">4.8:1</td>
+            <td><span class="ct-b ct-b-pass">Pass</span></td>
+          </tr>
+          <tr style="background:#FFF5F5;">
+            <td><span class="ct-sw" style="background:#3DB140;"></span>CTA on White ⚠️</td>
+            <td>Green-300</td><td>White</td>
+            <td class="ct-r ct-fail">2.8:1</td>
+            <td><span class="ct-b ct-b-fail">Fail</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-sw" style="background:#026348;"></span>Tab Active on White</td>
+            <td>Green-600</td><td>White</td>
+            <td class="ct-r ct-pass">7.3:1</td>
+            <td><span class="ct-b ct-b-pass">Pass</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-sw" style="background:#CC0000;"></span>Error on White</td>
+            <td>Red-500</td><td>White</td>
+            <td class="ct-r ct-pass">5.9:1</td>
+            <td><span class="ct-b ct-b-pass">Pass</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-sw" style="background:#0F766E;"></span>Success on White</td>
+            <td>Teal-700</td><td>White</td>
+            <td class="ct-r ct-pass">5.4:1</td>
+            <td><span class="ct-b ct-b-pass">Pass</span></td>
+          </tr>
+          <tr>
+            <td><span class="ct-sw" style="background:#B45309;"></span>Warning on White</td>
+            <td>Amber-700</td><td>White</td>
+            <td class="ct-r ct-pass">4.9:1</td>
+            <td><span class="ct-b ct-b-pass">Pass</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    <p>
+      <strong>Method:</strong> Pixel sampling จาก 3 หน้า (Homepage, Matching-Buyer, Matching-Investor) ด้วย Python/PIL ·
+      <strong>Key change:</strong> Dark BG ปรับเป็น #083538 (Green-800), CTA แยก 2 token ตาม context ·
+      <strong>Added:</strong> Warm-50 (#FAF3ED), Green-600 (#026348) ·
+      <strong>Numbering:</strong> ปรับ Green-800/900 ให้ตรงกับการใช้งานจริง (800 = dark bg, 900 = text)
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>
