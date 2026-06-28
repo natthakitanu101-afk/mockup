@@ -1,0 +1,1772 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OWND — Design System Documentation</title>
+
+<!-- ============================================================
+     OWND Design System Documentation (single file)
+     Source files extracted:
+       • OWND Landing v6.html      (React/JSX + Tailwind + custom CSS)
+       • OWND Matching Hero.html   (hand-written HTML + CSS)
+     Tech: Tailwind CDN + Kanit + small custom CSS for source fidelity.
+     Sections: Tokens → Buttons → Cards → Inputs → Tables(proposed)
+               → Navigation → Footer → Icons
+     ============================================================ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  /* Brand tokens mapped into Tailwind so utility classes match the source palette.
+     Values taken verbatim from OWND Landing v6 :root + measured usage. */
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Kanit', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'] },
+        colors: {
+          brand: {
+            lime: '#79F233',   // green-100  · CTA/accent on dark
+            300:  '#3DB140',   // green-300
+            500:  '#00704C',   // green-500  · primary, CTA on light
+            600:  '#026348',   // toggle bg / tab active
+            700:  '#004D33',   // hover
+            900:  '#0A2633',   // ink / heading
+            1000: '#061A22',
+          },
+          surface: { dark: '#083538', light: '#f8f9f6', light2: '#f4f7f5' },
+          ink: '#0A2633',
+          muted: '#5B6A6B',
+          danger: '#ef4444',
+        },
+        borderRadius: { pill: '50px' },
+      }
+    }
+  }
+</script>
+
+<style>
+  /* ====================================================================
+     1) DOC CHROME  — styles for the documentation shell only
+     ==================================================================== */
+  :root{
+    --green-100:#79F233; --green-300:#3DB140; --green-500:#00704C;
+    --green-600:#026348; --green-700:#004D33; --green-900:#0A2633;
+    --green-1000:#061A22; --surface-dark:#083538;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; scroll-padding-top:24px;}
+  body{font-family:'Kanit',sans-serif; margin:0; background:#f4f7f5; color:#0A2633;}
+  code,pre,.mono{font-family:'JetBrains Mono',monospace;}
+
+  .ds-shell{display:grid; grid-template-columns:264px minmax(0,1fr); gap:0; min-height:100vh;}
+
+  /* Sidebar */
+  .ds-side{
+    position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+    background:#083538; color:#fff; padding:28px 20px;
+  }
+  .ds-side .brand{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+  .ds-side .brand .logo{
+    width:34px;height:34px;border-radius:9px;flex:none;
+    background:linear-gradient(135deg,#79F233,#00704C);
+    display:flex;align-items:center;justify-content:center;color:#0A2633;font-weight:800;
+  }
+  .ds-side .brand b{font-size:16px;font-weight:700;letter-spacing:.02em;}
+  .ds-side .brand small{display:block;font-size:11px;color:rgba(255,255,255,.5);font-weight:400;}
+  .ds-nav{margin-top:22px;display:flex;flex-direction:column;gap:2px;}
+  .ds-nav .grp{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.38);margin:18px 8px 6px;}
+  .ds-nav a{
+    display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;
+    color:rgba(255,255,255,.74);text-decoration:none;font-size:14px;transition:all .15s;
+  }
+  .ds-nav a:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .ds-nav a.active{background:#79F233;color:#0A2633;font-weight:600;}
+
+  /* Main */
+  .ds-main{padding:40px clamp(20px,4vw,64px) 120px; max-width:1240px;}
+  .ds-h1{font-size:clamp(30px,4vw,46px);font-weight:800;letter-spacing:-.02em;margin:0 0 8px;color:#0A2633;}
+  .ds-lead{font-size:16px;color:#5B6A6B;font-weight:300;max-width:680px;line-height:1.7;margin:0 0 14px;}
+  .ds-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+  .ds-chip{font-size:12px;background:#E6F5EC;color:#00704C;border-radius:999px;padding:5px 12px;font-weight:500;}
+  .ds-chip.dk{background:#0A2633;color:#79F233;}
+
+  .ds-sec{margin-top:64px;scroll-margin-top:24px;}
+  .ds-sec-head{border-bottom:2px solid #00704C;padding-bottom:12px;margin-bottom:8px;display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .ds-sec-head h2{font-size:26px;font-weight:700;margin:0;color:#0A2633;}
+  .ds-sec-head .tag{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#9aa6a0;}
+  .ds-sec-desc{font-size:14.5px;color:#5B6A6B;line-height:1.7;max-width:760px;margin:14px 0 4px;}
+  .ds-sub{font-size:15px;font-weight:600;color:#0A2633;margin:30px 0 12px;display:flex;align-items:center;gap:8px;}
+  .ds-sub::before{content:"";width:8px;height:8px;border-radius:2px;background:#79F233;}
+
+  /* Component block: preview + code */
+  .ds-block{border:1px solid #e6ece8;border-radius:16px;overflow:hidden;margin:14px 0 26px;background:#fff;}
+  .ds-preview{padding:32px;background:
+      linear-gradient(45deg,#f3f5f3 25%,transparent 25%,transparent 75%,#f3f5f3 75%,#f3f5f3),
+      linear-gradient(45deg,#f3f5f3 25%,#fafbfa 25%,#fafbfa 75%,#f3f5f3 75%,#f3f5f3);
+    background-size:18px 18px;background-position:0 0,9px 9px;
+    display:flex;flex-wrap:wrap;gap:18px;align-items:center;}
+  .ds-preview.dark{background:#083538;}
+  .ds-preview.col{flex-direction:column;align-items:stretch;}
+  .ds-preview.center{justify-content:center;}
+  /* mobile-frame mode (toggled globally) */
+  body.vp-mobile .ds-preview[data-responsive]{display:block;}
+  body.vp-mobile .ds-preview[data-responsive] > .vp-wrap{max-width:390px;margin:0 auto;border:8px solid #0A2633;border-radius:28px;overflow:hidden;background:#fff;}
+  .vp-wrap{width:100%;}
+
+  .ds-code{position:relative;border-top:1px solid #eef2ef;background:#0d2b30;}
+  .ds-code pre{margin:0;padding:18px 20px;overflow-x:auto;font-size:12.5px;line-height:1.6;color:#d7e6df;}
+  .ds-code .lang{position:absolute;top:8px;left:14px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#79F233;opacity:.7;}
+  .ds-copy{position:absolute;top:8px;right:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
+    color:#cfe9d9;font-size:12px;padding:5px 12px;border-radius:7px;cursor:pointer;font-family:'Kanit';transition:all .15s;}
+  .ds-copy:hover{background:#79F233;color:#0A2633;border-color:#79F233;}
+
+  /* Variants / spec tables (these ARE the proposed brand table style, reused for docs) */
+  table.ds-table{width:100%;border-collapse:collapse;margin:8px 0 4px;font-size:13.5px;background:#fff;border:1px solid #e6ece8;border-radius:12px;overflow:hidden;}
+  table.ds-table thead th{background:#0A2633;color:#cdebd9;text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:11px 14px;}
+  table.ds-table td{padding:11px 14px;border-top:1px solid #eef2ef;color:#33403e;vertical-align:top;}
+  table.ds-table tbody tr:nth-child(even){background:#f7faf8;}            /* zebra */
+  table.ds-table tbody tr:hover{background:#E6F5EC;}                       /* hover */
+  table.ds-table td code{background:#eef3f0;color:#00704C;padding:1px 6px;border-radius:5px;font-size:12px;}
+  .ds-state{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;background:#E6F5EC;color:#00704C;}
+
+  /* Token swatches */
+  .tok-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin:8px 0;}
+  .tok{border:1px solid #e6ece8;border-radius:12px;overflow:hidden;background:#fff;}
+  .tok .chip{height:74px;}
+  .tok .meta{padding:10px 12px;}
+  .tok .meta b{font-size:13px;display:block;color:#0A2633;}
+  .tok .meta span{font-size:12px;color:#5B6A6B;}
+  .tok .meta .hex{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#00704C;}
+
+  .type-row{display:flex;align-items:baseline;gap:18px;padding:14px 0;border-bottom:1px solid #eef2ef;flex-wrap:wrap;}
+  .type-row .spec{font-family:'JetBrains Mono',monospace;font-size:12px;color:#5B6A6B;min-width:200px;}
+
+  .scale-row{display:flex;align-items:center;gap:14px;padding:9px 0;border-bottom:1px solid #eef2ef;}
+  .scale-row .bar{height:16px;background:linear-gradient(90deg,#79F233,#00704C);border-radius:4px;}
+  .scale-row .lab{font-family:'JetBrains Mono',monospace;font-size:12px;color:#0A2633;min-width:120px;}
+  .radius-demo{width:84px;height:64px;background:linear-gradient(135deg,#00704C,#0A2633);display:flex;align-items:flex-end;justify-content:center;color:#fff;font-size:11px;padding:6px;}
+  .shadow-demo{width:120px;height:80px;border-radius:14px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;color:#5B6A6B;}
+
+  /* Icon grid */
+  .icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px;margin-top:8px;}
+  .icon-cell{border:1px solid #e6ece8;border-radius:12px;padding:16px 8px 10px;text-align:center;background:#fff;transition:all .15s;}
+  .icon-cell:hover{border-color:#79F233;box-shadow:0 6px 18px rgba(0,112,76,.08);}
+  .icon-cell svg{width:24px;height:24px;color:#00704C;}
+  .icon-cell .nm{font-size:11px;color:#5B6A6B;margin-top:8px;font-family:'JetBrains Mono',monospace;}
+
+  /* Viewport toggle (sticky top-right of main) */
+  .vp-toggle{position:sticky;top:12px;z-index:30;display:inline-flex;background:#fff;border:1px solid #dde6e1;border-radius:999px;padding:4px;margin-bottom:8px;box-shadow:0 4px 14px rgba(10,38,51,.06);}
+  .vp-toggle button{border:none;background:transparent;font-family:'Kanit';font-size:13px;font-weight:500;color:#5B6A6B;padding:6px 16px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+  .vp-toggle button.active{background:#00704C;color:#fff;}
+
+  /* Mobile layout for the doc itself */
+  @media (max-width:920px){
+    .ds-shell{grid-template-columns:1fr;}
+    .ds-side{position:static;height:auto;}
+    .ds-nav{flex-direction:row;flex-wrap:wrap;}
+    .ds-nav .grp{width:100%;}
+  }
+
+  /* ====================================================================
+     2) SOURCE-FIDELITY COMPONENT CSS
+        Copied (lightly trimmed) from the two source files so previews
+        render exactly like production. Matching Hero = custom classes,
+        Landing = Tailwind (handled inline in markup).
+     ==================================================================== */
+
+  /* --- Buttons (Matching Hero) --- */
+  .btn-register{display:inline-flex;align-items:center;justify-content:center;padding:11px 28px;border-radius:50px;
+    background:#79F233;color:#0A2633;font-size:14.5px;font-weight:500;letter-spacing:.01em;text-decoration:none;border:none;cursor:pointer;transition:background-color .2s ease;}
+  .btn-register:hover{background:#8fff42;}
+  .cta{display:inline-flex;align-items:center;gap:12px;padding:14px 28px;border-radius:50px;background:#79F233;color:#0A2633;
+    font-size:16px;font-weight:500;letter-spacing:.01em;text-decoration:none;border:none;cursor:pointer;transition:background-color .2s ease;}
+  .cta:hover{background:#8fff42;}
+  .cta .arrow{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:#0A2633;}
+  .menu-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+    display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;backdrop-filter:blur(8px);transition:background .2s,transform .2s;}
+  .menu-btn:hover{background:rgba(255,255,255,.15);}
+  .menu-btn:active{transform:scale(.95);}
+  .menu-btn svg{width:22px;height:18px;}
+
+  /* --- Role toggle (Matching Hero) --- */
+  .role-toggle{position:relative;width:100%;max-width:520px;height:64px;border-radius:96px;background:#026348;border:1px solid #fff;padding:4px;
+    display:grid;grid-template-columns:1fr 1fr;overflow:hidden;}
+  .role-tab{display:inline-flex;align-items:center;justify-content:center;gap:12px;height:100%;border-radius:96px;font-size:15px;font-weight:600;
+    letter-spacing:.16em;color:rgba(255,255,255,.7);background:transparent;border:none;cursor:pointer;font-family:inherit;transition:color .2s,background-color .2s;}
+  .role-tab.is-active{background:#fff;color:#026348;box-shadow:0 2px 8px rgba(10,38,51,.1);}
+  .role-tab svg{width:20px;height:20px;}
+
+  /* --- Compare card (Matching Hero) --- */
+  .compare-card{position:relative;border-radius:24px;padding:28px;background:linear-gradient(180deg,#00704C 0%,#045242 100%);
+    border:1px solid rgba(255,255,255,.10);box-shadow:0 18px 48px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.10);overflow:hidden;color:#fff;max-width:440px;}
+  .compare-card.alt{background:linear-gradient(135deg,#3DB140 0%,#00704C 100%);}
+  .compare-card .ico{width:42px;height:42px;border-radius:10px;background:rgba(121,242,51,.14);border:1px solid rgba(121,242,51,.30);
+    color:#79F233;display:inline-flex;align-items:center;justify-content:center;}
+  .compare-card .ico svg{width:22px;height:22px;}
+  .compare-card .hd{display:flex;align-items:center;gap:14px;padding-bottom:18px;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,.10);}
+  .compare-card .hd h4{margin:0;font-size:18px;font-weight:600;}
+  .compare-card .rowlab{font-size:13px;color:rgba(255,255,255,.62);font-weight:500;margin-top:12px;}
+  .compare-card .rowtxt{font-size:14px;line-height:1.6;color:rgba(255,255,255,.88);margin:2px 0 0;}
+
+  /* --- Note card (Matching Hero) --- */
+  .note-card{background:#fff;border-radius:18px;padding:28px;box-shadow:0 12px 32px rgba(10,38,51,.08),0 2px 6px rgba(10,38,51,.04);max-width:380px;}
+  .note-card .ico{width:44px;height:44px;border-radius:12px;background:rgba(239,68,68,.10);display:inline-flex;align-items:center;justify-content:center;color:#ef4444;margin-bottom:18px;}
+  .note-card .ico svg{width:22px;height:22px;}
+  .note-card h4{font-size:18px;font-weight:700;color:#0A2633;letter-spacing:.02em;margin:0 0 10px;}
+  .note-card p{font-size:14.5px;line-height:1.65;color:rgba(10,38,51,.62);margin:0;}
+
+  /* --- Step card (Matching Hero) --- */
+  .step-card{position:relative;border-radius:18px;padding:26px;background:linear-gradient(135deg,#006B3F 0%,#034B33 100%);color:#fff;
+    box-shadow:0 14px 36px rgba(0,80,50,.16),inset 0 1px 0 rgba(255,255,255,.08);overflow:hidden;max-width:420px;}
+  .step-card h4{font-size:18px;font-weight:700;color:#79F233;margin:0 0 12px;}
+  .step-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:50px;background:rgba(121,242,51,.18);border:1px solid rgba(121,242,51,.30);color:#79F233;font-size:12px;font-weight:500;margin:0 0 14px;}
+  .step-pill svg{width:12px;height:12px;}
+  .step-card p{font-size:14.5px;line-height:1.65;color:rgba(255,255,255,.82);margin:0;}
+  .step-icon{width:60px;height:60px;border-radius:50%;background:#00704C;color:#fff;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 0 6px rgba(61,177,64,.18),0 8px 18px rgba(61,177,64,.30);}
+  .step-icon svg{width:26px;height:26px;}
+
+  /* --- Liquid-glass menu panel (Matching Hero nav) --- */
+  .menu-panel{width:300px;background:rgba(15,38,48,.20);backdrop-filter:blur(28px) saturate(1.4);border-radius:16px;padding:8px;
+    box-shadow:0 16px 40px rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.14);}
+  .menu-item{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;border:none;background:transparent;
+    border-bottom:1px solid rgba(255,255,255,.10);color:rgba(255,255,255,.95);font-family:inherit;font-size:16px;font-weight:500;cursor:pointer;text-align:left;text-decoration:none;border-radius:0;transition:background .15s,border-radius .15s;}
+  .menu-item:last-child{border-bottom:none;}
+  .menu-item:hover{background:rgba(255,255,255,.08);border-radius:12px;}
+  .menu-item.is-active{background:#5DC744;border-radius:12px;border-bottom:none;color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(93,199,68,.3);}
+  .menu-item .mi-ico{width:20px;height:20px;color:rgba(255,255,255,.7);display:inline-flex;}
+  .menu-item.is-active .mi-ico{color:#fff;}
+  .menu-item .mi-ico svg{width:100%;height:100%;}
+  .menu-item .mi-lab{flex:1;}
+  /* PNG menu icons (assets/menu/*.png) → render white on the dark glass panel */
+  .menu-item .mi-img{width:20px;height:20px;object-fit:contain;display:block;filter:brightness(0) invert(1);opacity:.8;}
+  .menu-item.is-active .mi-img{opacity:1;}
+  .menu-item .mi-chev{width:16px;height:16px;color:rgba(255,255,255,.45);transition:transform .25s ease;display:inline-flex;flex:none;}
+  .menu-item .mi-chev svg{width:100%;height:100%;}
+  .menu-item.is-expanded .mi-chev{transform:rotate(90deg);}
+  .menu-sub{overflow:hidden;max-height:0;transition:max-height .32s ease;}
+  .menu-item.is-expanded + .menu-sub{max-height:360px;}
+  .menu-sub .menu-item{padding-left:48px;font-size:15px;color:rgba(255,255,255,.85);border-bottom:1px solid rgba(255,255,255,.08);}
+  .menu-sub .menu-item .mi-ico{width:18px;height:18px;}
+  .menu-lang-check{width:18px;height:18px;border-radius:4px;border:1.5px solid rgba(255,255,255,.3);display:inline-flex;align-items:center;justify-content:center;flex:none;color:#fff;}
+  .menu-lang-check svg{width:12px;height:12px;opacity:0;}
+  .menu-lang-check.is-checked{background:#5BD239;border-color:#5BD239;}
+  .menu-lang-check.is-checked svg{opacity:1;}
+  .menu-flag{width:22px;height:16px;display:inline-flex;align-items:center;justify-content:center;flex:none;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.08);}
+  .menu-flag img{width:100%;height:100%;object-fit:cover;}
+
+  /* --- Custom form select dropdown (faithful to Landing v6 Get-Started) --- */
+  .ds-select{position:relative;width:100%;max-width:420px;font-family:'Kanit';}
+  .ds-select__btn{width:100%;display:inline-flex;align-items:center;gap:8px;border-radius:12px;border:1px solid #e5e7eb;background:#fff;
+    padding:12px 40px 12px 12px;font-size:14px;font-family:'Kanit';color:#0A2633;text-align:left;cursor:pointer;position:relative;transition:all .18s;}
+  .ds-select__btn.is-open{border-color:#00704C;box-shadow:0 0 0 2px rgba(0,112,76,.15);background:#fff;}
+  .ds-select__btn.is-placeholder{color:#9CA3AF;background:rgba(249,250,251,.5);}
+  .ds-select__ico{width:20px;height:20px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;background:rgba(0,112,76,.1);flex:none;}
+  .ds-select__ico svg{width:12px;height:12px;color:#00704C;}
+  .ds-select__chev{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#9CA3AF;transition:transform .2s;pointer-events:none;display:inline-flex;}
+  .ds-select__btn.is-open .ds-select__chev{transform:translateY(-50%) rotate(180deg);}
+  .ds-select__panel{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:50;border-radius:16px;background:#fff;border:1px solid rgba(0,0,0,.08);
+    box-shadow:0 12px 40px rgba(10,38,51,.12),0 4px 12px rgba(0,0,0,.06);padding:6px;transform:translateY(-8px) scale(.98);opacity:0;pointer-events:none;
+    transition:all .2s cubic-bezier(.16,1,.3,1);transform-origin:top center;}
+  .ds-select.is-open .ds-select__panel{transform:translateY(0) scale(1);opacity:1;pointer-events:auto;}
+  .ds-select__opt{width:100%;display:flex;align-items:center;gap:12px;text-align:left;font-size:14px;font-family:'Kanit';padding:12px 14px;border-radius:12px;border:none;background:transparent;color:#0A2633;cursor:pointer;}
+  .ds-select__opt:hover{background:rgba(0,0,0,.03);}
+  .ds-select__opt.is-selected{background:rgba(61,177,64,.06);font-weight:600;}
+  .ds-select__opt .oico{width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;background:rgba(10,38,51,.05);flex:none;}
+  .ds-select__opt.is-selected .oico{background:rgba(0,112,76,.12);}
+  .ds-select__opt .oico svg{width:16px;height:16px;color:#9CA3AF;}
+  .ds-select__opt.is-selected .oico svg{color:#00704C;}
+  .ds-select__opt .ocheck{margin-left:auto;color:#00704C;opacity:0;display:inline-flex;}
+  .ds-select__opt.is-selected .ocheck{opacity:1;}
+
+  /* --- Checkbox (native input + custom box; faithful to Landing v6 PDPA) --- */
+  .ds-check{display:flex;align-items:flex-start;gap:12px;cursor:pointer;user-select:none;font-family:'Kanit';}
+  .ds-check input{position:absolute;opacity:0;width:0;height:0;}
+  .ds-check .box{width:20px;height:20px;flex:none;margin-top:1px;border-radius:6px;background:#fff;border:1.5px solid rgba(10,38,51,.2);
+    display:flex;align-items:center;justify-content:center;transition:all .18s ease;}
+  .ds-check .box svg{width:12px;height:12px;opacity:0;color:#fff;}
+  .ds-check input:checked + .box{background:#00704C;border-color:#00704C;box-shadow:0 1px 3px rgba(61,177,64,.3);}
+  .ds-check input:checked + .box svg{opacity:1;}
+  .ds-check input:focus-visible + .box{box-shadow:0 0 0 3px rgba(0,112,76,.25);}
+  .ds-check .ctext{font-size:14px;line-height:1.5;color:#0A2633;}
+  .ds-check .ctext a{color:#00704C;font-weight:500;text-decoration:underline;}
+  /* card style — boxed, highlights when checked */
+  .ds-check.card{padding:14px 16px;border-radius:14px;background:rgba(10,38,51,.025);border:1px solid rgba(10,38,51,.08);transition:all .2s ease;}
+  .ds-check.card:has(input:checked){background:rgba(61,177,64,.06);border-color:rgba(61,177,64,.25);}
+  /* disabled */
+  .ds-check.is-disabled{opacity:.5;cursor:not-allowed;}
+
+  /* --- Form card (composition wrapper, Landing v6 Get-Started) --- */
+  .ds-form{background:#fff;border-radius:24px;padding:32px;box-shadow:0 18px 48px rgba(10,38,51,.10);border:1px solid #eef2ef;max-width:440px;width:100%;font-family:'Kanit';}
+  .ds-form__head{display:flex;align-items:center;gap:12px;margin-bottom:22px;}
+  .ds-form__head .hico{width:44px;height:44px;border-radius:12px;background:rgba(0,112,76,.15);display:flex;align-items:center;justify-content:center;color:#00704C;flex:none;}
+  .ds-form__head .hico svg{width:20px;height:20px;}
+  .ds-form__head b{font-size:18px;font-weight:700;color:#0A2633;display:block;line-height:1.2;}
+  .ds-form__head small{font-size:12px;color:#9aa6a0;}
+  .ds-form label.fl{display:block;font-size:13.5px;font-weight:500;color:#475569;margin:0 0 6px;}
+  .ds-form .fi{width:100%;border-radius:12px;border:1px solid #e5e7eb;background:rgba(249,250,251,.5);padding:12px;font-size:14px;font-family:'Kanit';color:#0A2633;margin-bottom:16px;transition:all .18s;}
+  .ds-form .fi:focus{outline:none;border-color:#00704C;background:#fff;box-shadow:0 0 0 2px rgba(0,112,76,.12);}
+  .ds-form__submit{width:100%;background:#00704C;color:#fff;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:600;font-family:'Kanit';
+    cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background .2s;margin-top:4px;}
+  .ds-form__submit:hover{background:#004D33;}
+  .ds-form__submit svg{width:18px;height:18px;}
+  .ds-form__trust{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;}
+  .ds-form__trust .t{border:1px solid #e5e7eb;border-radius:12px;background:#fff;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;}
+  .ds-form__trust .t svg{width:18px;height:18px;color:#00704C;}
+  .ds-form__trust .t span{font-size:11px;color:#5B6A6B;line-height:1.3;}
+
+  /* ====================================================================
+     3) PRODUCTION COMPONENTS (added in high-end pass)
+     ==================================================================== */
+  /* a11y: keyboard focus ring across the whole system */
+  .ds-main a:focus-visible, .ds-main button:focus-visible,
+  .ds-main input:focus-visible, .ds-main [tabindex]:focus-visible{
+    outline:2px solid #00704C; outline-offset:2px; border-radius:6px;
+  }
+
+  /* --- Radio --- */
+  .ds-radio{display:flex;align-items:center;gap:12px;cursor:pointer;font-family:'Kanit';}
+  .ds-radio input{position:absolute;opacity:0;width:0;height:0;}
+  .ds-radio .dot{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(10,38,51,.25);background:#fff;flex:none;display:flex;align-items:center;justify-content:center;transition:border-color .18s;}
+  .ds-radio .dot::after{content:"";width:10px;height:10px;border-radius:50%;background:#00704C;transform:scale(0);transition:transform .18s;}
+  .ds-radio input:checked + .dot{border-color:#00704C;}
+  .ds-radio input:checked + .dot::after{transform:scale(1);}
+  .ds-radio .rtext{font-size:14px;color:#0A2633;}
+  .ds-radio.is-disabled{opacity:.5;cursor:not-allowed;}
+
+  /* --- Switch --- */
+  .ds-switch{display:inline-flex;align-items:center;gap:12px;cursor:pointer;font-family:'Kanit';}
+  .ds-switch input{position:absolute;opacity:0;width:0;height:0;}
+  .ds-switch .track{width:44px;height:26px;border-radius:999px;background:#cbd5d3;position:relative;transition:background .2s;flex:none;}
+  .ds-switch .track::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s;}
+  .ds-switch input:checked + .track{background:#00704C;}
+  .ds-switch input:checked + .track::after{transform:translateX(18px);}
+  .ds-switch .stext{font-size:14px;color:#0A2633;}
+
+  /* --- Badge / Chip --- */
+  .ds-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;font-family:'Kanit';line-height:1.4;}
+  .ds-badge svg{width:12px;height:12px;}
+  .ds-badge--brand{background:#E6F5EC;color:#00704C;}
+  .ds-badge--neutral{background:#eef2ef;color:#5B6A6B;}
+  .ds-badge--success{background:#F0FDFA;color:#0F766E;}
+  .ds-badge--warning{background:#FFFBEB;color:#B45309;}
+  .ds-badge--danger{background:#FFF5F5;color:#B91C1C;}
+  .ds-badge--dark{background:#0A2633;color:#79F233;}
+  .ds-chip{display:inline-flex;align-items:center;gap:8px;font-size:13px;padding:6px 6px 6px 12px;border-radius:999px;background:#eef2ef;color:#0A2633;font-family:'Kanit';}
+  .ds-chip button{border:none;background:rgba(10,38,51,.1);width:18px;height:18px;border-radius:50%;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:#5B6A6B;padding:0;}
+  .ds-chip button svg{width:11px;height:11px;}
+
+  /* --- Alert / Banner --- */
+  .ds-alert{display:flex;gap:12px;padding:14px 16px;border-radius:12px;font-family:'Kanit';font-size:14px;line-height:1.55;align-items:flex-start;border:1px solid transparent;max-width:560px;}
+  .ds-alert .ai{flex:none;width:20px;height:20px;margin-top:1px;}
+  .ds-alert .ai svg{width:20px;height:20px;}
+  .ds-alert b{display:block;margin-bottom:2px;}
+  .ds-alert--success{background:#F0FDFA;border-color:#99f6e4;color:#0F766E;}
+  .ds-alert--warning{background:#FFFBEB;border-color:#FDE68A;color:#B45309;}
+  .ds-alert--danger{background:#FFF5F5;border-color:#FECACA;color:#B91C1C;}
+  .ds-alert--info{background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8;}
+
+  /* --- Tooltip --- */
+  .ds-tip{position:relative;display:inline-flex;}
+  .ds-tip .tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);background:#0A2633;color:#fff;font-size:12px;padding:6px 10px;border-radius:8px;white-space:nowrap;opacity:0;pointer-events:none;transition:all .18s;font-family:'Kanit';z-index:60;}
+  .ds-tip .tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#0A2633;}
+  .ds-tip:hover .tip, .ds-tip:focus-within .tip{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* --- Progress / Skeleton / Spinner --- */
+  .ds-progress{width:100%;max-width:340px;height:8px;border-radius:999px;background:#eef2ef;overflow:hidden;}
+  .ds-progress .bar{height:100%;border-radius:999px;background:linear-gradient(90deg,#79F233,#00704C);transition:width .4s ease;}
+  .ds-skel{background:linear-gradient(90deg,#eef2ef 25%,#f6f8f7 37%,#eef2ef 63%);background-size:400% 100%;animation:ownd-shimmer 1.4s ease infinite;border-radius:8px;}
+  @keyframes ownd-shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+  .ds-spin{width:28px;height:28px;border-radius:50%;border:3px solid #e6ece8;border-top-color:#00704C;animation:ownd-spin .8s linear infinite;}
+  @keyframes ownd-spin{to{transform:rotate(360deg)}}
+
+  /* --- Modal --- */
+  .ds-modal-overlay{position:fixed;inset:0;background:rgba(10,38,51,.5);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .ds-modal-overlay.is-open{opacity:1;pointer-events:auto;}
+  .ds-modal{background:#fff;border-radius:20px;max-width:440px;width:100%;padding:28px;box-shadow:0 24px 64px rgba(10,38,51,.3);transform:scale(.95) translateY(10px);transition:transform .25s cubic-bezier(.2,.7,.2,1);font-family:'Kanit';}
+  .ds-modal-overlay.is-open .ds-modal{transform:scale(1) translateY(0);}
+  .ds-modal .mh{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;}
+  .ds-modal .mh .mi{width:44px;height:44px;border-radius:12px;background:rgba(0,112,76,.12);color:#00704C;display:flex;align-items:center;justify-content:center;flex:none;}
+  .ds-modal h3{font-size:20px;font-weight:700;color:#0A2633;margin:0 0 6px;}
+  .ds-modal p{font-size:14px;color:#5B6A6B;line-height:1.6;margin:0 0 22px;}
+  .ds-modal .actions{display:flex;gap:10px;justify-content:flex-end;}
+  .ds-btn-ghost{background:#fff;border:1px solid #e5e7eb;color:#0A2633;border-radius:10px;padding:10px 18px;font-family:'Kanit';font-size:14px;font-weight:500;cursor:pointer;}
+  .ds-btn-ghost:hover{background:#f6f8f7;}
+  .ds-btn-solid{background:#00704C;border:none;color:#fff;border-radius:10px;padding:10px 18px;font-family:'Kanit';font-size:14px;font-weight:600;cursor:pointer;}
+  .ds-btn-solid:hover{background:#004D33;}
+
+  /* --- Toast --- */
+  .ds-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(160%);z-index:110;background:#0A2633;color:#fff;padding:14px 20px;border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.3);display:flex;align-items:center;gap:12px;font-family:'Kanit';font-size:14px;transition:transform .35s cubic-bezier(.2,.7,.2,1);max-width:90vw;}
+  .ds-toast.is-shown{transform:translateX(-50%) translateY(0);}
+  .ds-toast .ti{width:22px;height:22px;border-radius:50%;background:#79F233;color:#0A2633;display:flex;align-items:center;justify-content:center;flex:none;}
+  .ds-toast .ti svg{width:14px;height:14px;}
+
+  /* --- Tabs (underline) --- */
+  .ds-tabs{border-bottom:1px solid #e6ece8;display:flex;gap:4px;flex-wrap:wrap;}
+  .ds-tab{border:none;background:transparent;font-family:'Kanit';font-size:14px;font-weight:500;color:#5B6A6B;padding:12px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s;}
+  .ds-tab:hover{color:#0A2633;}
+  .ds-tab.is-active{color:#00704C;border-bottom-color:#00704C;font-weight:600;}
+  .ds-tabpanel{padding:18px 4px;font-size:14px;color:#33403e;line-height:1.7;}
+  .ds-tabpanel[hidden]{display:none;}
+
+  /* --- Pagination --- */
+  .ds-pager{display:inline-flex;align-items:center;gap:6px;font-family:'Kanit';flex-wrap:wrap;}
+  .ds-pager button{min-width:38px;height:38px;border-radius:10px;border:1px solid #e6ece8;background:#fff;color:#0A2633;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;font-family:'Kanit';}
+  .ds-pager button:hover:not(:disabled){border-color:#00704C;color:#00704C;}
+  .ds-pager button.is-active{background:#00704C;color:#fff;border-color:#00704C;}
+  .ds-pager button:disabled{opacity:.4;cursor:not-allowed;}
+  .ds-pager button svg{width:16px;height:16px;}
+
+  /* --- Breadcrumb --- */
+  .ds-crumb{display:flex;align-items:center;gap:8px;font-family:'Kanit';font-size:14px;flex-wrap:wrap;}
+  .ds-crumb a{color:#5B6A6B;text-decoration:none;transition:color .15s;}
+  .ds-crumb a:hover{color:#00704C;}
+  .ds-crumb .sep{color:#cbd5d3;display:inline-flex;}
+  .ds-crumb .current{color:#0A2633;font-weight:600;}
+
+  /* --- Avatar --- */
+  .ds-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#79F233,#00704C);color:#0A2633;display:inline-flex;align-items:center;justify-content:center;font-family:'Kanit';font-weight:700;font-size:16px;overflow:hidden;flex:none;}
+  .ds-avatar img{width:100%;height:100%;object-fit:cover;}
+  .ds-avatar--sm{width:32px;height:32px;font-size:13px;}
+  .ds-avatar--lg{width:56px;height:56px;font-size:20px;}
+  .ds-avatar-group{display:inline-flex;}
+  .ds-avatar-group .ds-avatar{border:2px solid #fff;margin-left:-12px;}
+  .ds-avatar-group .ds-avatar:first-child{margin-left:0;}
+
+  /* contrast / a11y table reuse ds-table */
+  .a11y-pass{color:#0F766E;font-weight:700;}
+  .a11y-fail{color:#B91C1C;font-weight:700;}
+
+  /* --- Footer (Matching Hero) --- */
+  .ownd-footer{background:#083538;color:#fff;padding:48px 40px 28px;border-radius:14px;}
+  .ownd-footer .fgrid{display:grid;grid-template-columns:1.4fr repeat(3,1fr) 1.2fr;gap:32px;margin-bottom:40px;}
+  .ownd-footer .fdesc{font-size:14px;color:rgba(255,255,255,.60);line-height:1.7;max-width:240px;margin:14px 0 16px;}
+  .ownd-footer .fbadge{display:inline-flex;align-items:center;gap:6px;background:rgba(121,242,51,.10);border:1px solid rgba(121,242,51,.30);color:#79F233;font-size:12px;border-radius:999px;padding:6px 12px;}
+  .ownd-footer .fbadge svg{width:12px;height:12px;}
+  .ownd-footer .ftitle{font-size:14px;font-weight:600;color:#79F233;margin:0 0 18px;}
+  .ownd-footer ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:13px;}
+  .ownd-footer ul a{font-size:14px;color:rgba(255,255,255,.60);text-decoration:none;transition:color .15s;}
+  .ownd-footer ul a:hover{color:#fff;}
+  .ownd-footer .fcontact a{display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.80);text-decoration:none;font-size:14px;margin-bottom:14px;}
+  .ownd-footer .icirc{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);display:inline-flex;align-items:center;justify-content:center;flex:none;}
+  .ownd-footer .icirc svg{width:14px;height:14px;color:#79F233;}
+  .ownd-footer .fbottom{border-top:1px solid rgba(255,255,255,.10);padding-top:22px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;}
+  .ownd-footer .fcopy{font-size:12px;color:rgba(255,255,255,.40);}
+  .ownd-footer .flegal{display:flex;flex-wrap:wrap;gap:22px;font-size:12px;}
+  .ownd-footer .flegal a{color:rgba(255,255,255,.60);text-decoration:none;}
+  .ownd-footer .flegal a:hover{color:#fff;}
+  @media (max-width:1024px){.ownd-footer .fgrid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:600px){.ownd-footer .fgrid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="ds-shell">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="ds-side">
+    <div class="brand">
+      <span class="logo">O</span>
+      <span><b>OWND</b><small>Design System v1</small></span>
+    </div>
+    <nav class="ds-nav" id="dsNav">
+      <span class="grp">Foundation</span>
+      <a href="#tokens-color">สี · Colors</a>
+      <a href="#tokens-type">ตัวอักษร · Typography</a>
+      <a href="#tokens-space">Spacing · Radius · Shadow</a>
+      <a href="#tokens-motion">Motion · Breakpoints</a>
+      <span class="grp">Components</span>
+      <a href="#c-buttons">Buttons</a>
+      <a href="#c-cards">Cards</a>
+      <a href="#c-inputs">Text fields / Inputs</a>
+      <a href="#c-selection">Radio · Switch</a>
+      <a href="#c-dropdowns">Dropdowns &amp; Menus</a>
+      <a href="#c-form">Form &amp; Checkbox</a>
+      <a href="#c-tables">Tables <em style="opacity:.5;font-style:normal">·proposed</em></a>
+      <span class="grp">Feedback &amp; Status</span>
+      <a href="#c-badge">Badge · Chip</a>
+      <a href="#c-feedback">Alert · Toast · Tooltip</a>
+      <a href="#c-progress">Progress · Skeleton · Spinner</a>
+      <a href="#c-overlay">Modal / Dialog</a>
+      <span class="grp">Navigation patterns</span>
+      <a href="#c-tabs">Tabs</a>
+      <a href="#c-pagination">Pagination · Breadcrumb</a>
+      <a href="#c-avatar">Avatar</a>
+      <a href="#c-nav">Nav bar &amp; Menu</a>
+      <a href="#c-footer">Footer</a>
+      <a href="#c-icons">Icons</a>
+      <span class="grp">Resources</span>
+      <a href="#a11y">Accessibility</a>
+      <a href="#tokens-export">Design Tokens (export)</a>
+    </nav>
+  </aside>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="ds-main">
+
+    <!-- Viewport toggle -->
+    <div class="vp-toggle" role="group" aria-label="viewport">
+      <button data-vp="desktop" class="active" onclick="setVP('desktop')">🖥️ Desktop</button>
+      <button data-vp="mobile" onclick="setVP('mobile')">📱 Mobile</button>
+    </div>
+
+    <header>
+      <h1 class="ds-h1">OWND Design System</h1>
+      <p class="ds-lead">เอกสารระบบดีไซน์ที่ extract จากไฟล์จริง 2 หน้า — <b>Landing v6</b> และ <b>Matching Hero</b> — รวม design tokens และ component ทุกตัวพร้อม live preview, code snippet ที่ copy ได้, และตาราง variant/state</p>
+      <div class="ds-meta">
+        <span class="ds-chip">Kanit</span>
+        <span class="ds-chip">Tailwind CDN</span>
+        <span class="ds-chip dk">Brand green #00704C</span>
+        <span class="ds-chip dk">Accent #79F233</span>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         FOUNDATION · COLORS
+         ============================================================ -->
+    <section class="ds-sec" id="tokens-color">
+      <div class="ds-sec-head"><h2>สี · Color Palette</h2><span class="tag">Foundation</span></div>
+      <p class="ds-sec-desc">Palette แกนเขียวจาก <code>:root</code> ของ Landing v6 (<code>--green-100…1000</code>) บวกสีพื้นผิว/semantic ที่วัดจากการใช้งานจริง สี lime <code>#79F233</code> ใช้เป็น accent/CTA บนพื้นเข้มเท่านั้น ส่วน <code>#00704C</code> เป็นปุ่มหลักบนพื้นขาว</p>
+
+      <div class="ds-sub">Brand greens</div>
+      <div class="tok-grid">
+        <div class="tok"><div class="chip" style="background:#79F233"></div><div class="meta"><b>green-100 / lime</b><span class="hex">#79F233</span><span> · CTA on dark, accent</span></div></div>
+        <div class="tok"><div class="chip" style="background:#3DB140"></div><div class="meta"><b>green-300</b><span class="hex">#3DB140</span><span> · accent, gradient</span></div></div>
+        <div class="tok"><div class="chip" style="background:#00704C"></div><div class="meta"><b>green-500 · brand</b><span class="hex">#00704C</span><span> · primary CTA, link</span></div></div>
+        <div class="tok"><div class="chip" style="background:#026348"></div><div class="meta"><b>green-600</b><span class="hex">#026348</span><span> · toggle, tab active</span></div></div>
+        <div class="tok"><div class="chip" style="background:#004D33"></div><div class="meta"><b>green-700</b><span class="hex">#004D33</span><span> · hover</span></div></div>
+        <div class="tok"><div class="chip" style="background:#0A2633"></div><div class="meta"><b>green-900 · ink</b><span class="hex">#0A2633</span><span> · text, heading</span></div></div>
+        <div class="tok"><div class="chip" style="background:#061A22"></div><div class="meta"><b>green-1000</b><span class="hex">#061A22</span><span> · darkest</span></div></div>
+        <div class="tok"><div class="chip" style="background:#083538"></div><div class="meta"><b>surface-dark</b><span class="hex">#083538</span><span> · dark section, footer, nav</span></div></div>
+      </div>
+
+      <div class="ds-sub">Surfaces & semantic</div>
+      <div class="tok-grid">
+        <div class="tok"><div class="chip" style="background:#ffffff;border-bottom:1px solid #eee"></div><div class="meta"><b>white</b><span class="hex">#FFFFFF</span><span> · page, card</span></div></div>
+        <div class="tok"><div class="chip" style="background:#f8f9f6"></div><div class="meta"><b>surface-light</b><span class="hex">#F8F9F6</span><span> · Get Started bg</span></div></div>
+        <div class="tok"><div class="chip" style="background:#f4f7f5"></div><div class="meta"><b>surface-light2</b><span class="hex">#F4F7F5</span><span> · steps gradient</span></div></div>
+        <div class="tok"><div class="chip" style="background:#5B6A6B"></div><div class="meta"><b>muted</b><span class="hex">#5B6A6B</span><span> · secondary text</span></div></div>
+        <div class="tok"><div class="chip" style="background:#ef4444"></div><div class="meta"><b>danger</b><span class="hex">#EF4444</span><span> · note / error icon</span></div></div>
+        <div class="tok"><div class="chip" style="background:#E6F5EC"></div><div class="meta"><b>brand-tint</b><span class="hex">#E6F5EC</span><span> · badge / selected bg</span></div></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FOUNDATION · TYPOGRAPHY
+         ============================================================ -->
+    <section class="ds-sec" id="tokens-type">
+      <div class="ds-sec-head"><h2>ตัวอักษร · Typography</h2><span class="tag">Foundation</span></div>
+      <p class="ds-sec-desc">ฟอนต์เดียวทั้งระบบ: <b>Kanit</b> (300/400/500/600/700/800). ขนาดทุกตัวใช้ <code>clamp()</code> เพื่อ fluid scale ระหว่าง mobile↔desktop. ค่าด้านล่างเป็นช่วงจริงที่วัดจากไฟล์ต้นทาง</p>
+      <div>
+        <div class="type-row"><span class="spec">H1 · 700 · clamp(34→64px)</span><span style="font-size:clamp(30px,5vw,52px);font-weight:700;letter-spacing:-.01em;line-height:1.18;">บ้านในฝันที่คุณอยากมี</span></div>
+        <div class="type-row"><span class="spec">H2 · 700–800 · clamp(28→56px)</span><span style="font-size:clamp(24px,4vw,40px);font-weight:800;">สองเส้นทางสู่การมีบ้าน</span></div>
+        <div class="type-row"><span class="spec">H3 / card title · 700 · 18–22px</span><span style="font-size:20px;font-weight:700;">Model : Ownd Matching</span></div>
+        <div class="type-row"><span class="spec">Eyebrow · 500–600 · 11–14px · upper · ls .2–.36em</span><span style="font-size:13px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:#00704C;">WHY OWND</span></div>
+        <div class="type-row"><span class="spec">Lede · 300 · 15–17.5px · lh1.7</span><span style="font-size:16px;font-weight:300;color:#5B6A6B;">OWND เปิดโอกาสให้คนที่มีศักยภาพทางการเงิน</span></div>
+        <div class="type-row"><span class="spec">Body · 400–500 · 14–15.5px · lh1.65</span><span style="font-size:15px;font-weight:400;color:#33403e;">ค่างวดสะสมเป็นทรัพย์สิน ล็อกราคาตลอดสัญญา</span></div>
+        <div class="type-row"><span class="spec">Caption · 400 · 11–13px</span><span style="font-size:12px;font-weight:400;color:#9aa6a0;">ไม่มีค่าใช้จ่าย ไม่ผูกมัด</span></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FOUNDATION · SPACING / RADIUS / SHADOW
+         ============================================================ -->
+    <section class="ds-sec" id="tokens-space">
+      <div class="ds-sec-head"><h2>Spacing · Radius · Shadow</h2><span class="tag">Foundation</span></div>
+
+      <div class="ds-sub">Spacing scale (fluid)</div>
+      <p class="ds-sec-desc">ระยะห่างใช้ <code>clamp()</code> ทั้งหมด ค่าที่พบบ่อย:</p>
+      <div class="scale-row"><span class="lab">section pad</span><div class="bar" style="width:56px"></div><span class="spec mono" style="font-size:12px;color:#5B6A6B">clamp(20px, 4vw, 56px)</span></div>
+      <div class="scale-row"><span class="lab">section Y</span><div class="bar" style="width:112px"></div><span class="spec mono" style="font-size:12px;color:#5B6A6B">clamp(48–64px → 96–128px)</span></div>
+      <div class="scale-row"><span class="lab">card pad</span><div class="bar" style="width:32px"></div><span class="spec mono" style="font-size:12px;color:#5B6A6B">clamp(22px, 2.4vw, 32px)</span></div>
+      <div class="scale-row"><span class="lab">gap</span><div class="bar" style="width:24px"></div><span class="spec mono" style="font-size:12px;color:#5B6A6B">12 · 16 · 24 · 32px</span></div>
+
+      <div class="ds-sub">Radius</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;">
+        <div style="text-align:center"><div class="radius-demo" style="border-radius:12px">12</div><small>card sm</small></div>
+        <div style="text-align:center"><div class="radius-demo" style="border-radius:16px">16</div><small>card / input</small></div>
+        <div style="text-align:center"><div class="radius-demo" style="border-radius:18px">18</div><small>note / step</small></div>
+        <div style="text-align:center"><div class="radius-demo" style="border-radius:24px">24</div><small>card lg</small></div>
+        <div style="text-align:center"><div class="radius-demo" style="border-radius:50px">pill</div><small>50 / 96 / 999</small></div>
+      </div>
+
+      <div class="ds-sub">Shadow</div>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;padding:8px 0;">
+        <div style="text-align:center"><div class="shadow-demo" style="box-shadow:0 12px 32px rgba(10,38,51,.08),0 2px 6px rgba(10,38,51,.04)">card</div><small class="mono" style="font-size:11px">0 12px 32px /.08</small></div>
+        <div style="text-align:center"><div class="shadow-demo" style="box-shadow:0 18px 48px rgba(10,38,51,.10)">card-lg</div><small class="mono" style="font-size:11px">0 18px 48px /.10</small></div>
+        <div style="text-align:center"><div class="shadow-demo" style="box-shadow:0 8px 18px rgba(61,177,64,.30)">green glow</div><small class="mono" style="font-size:11px">rgba(61,177,64,.3)</small></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         FOUNDATION · MOTION & BREAKPOINTS
+         ============================================================ -->
+    <section class="ds-sec" id="tokens-motion">
+      <div class="ds-sec-head"><h2>Motion · Breakpoints</h2><span class="tag">Foundation</span></div>
+      <p class="ds-sec-desc">Duration และ easing สกัดจาก transition จริงในไฟล์ต้นทาง · ทุก component ควรใช้ค่าชุดนี้เพื่อให้ความรู้สึกการเคลื่อนไหวสม่ำเสมอ (เคารพ <code>prefers-reduced-motion</code> เสมอ)</p>
+
+      <div class="ds-sub">Duration &amp; Easing</div>
+      <table class="ds-table">
+        <thead><tr><th>Token</th><th>Value</th><th>ใช้กับ</th></tr></thead>
+        <tbody>
+          <tr><td><code>--ownd-dur-fast</code></td><td>150ms</td><td>hover, color change</td></tr>
+          <tr><td><code>--ownd-dur-base</code></td><td>200ms</td><td>buttons, inputs, dropdown</td></tr>
+          <tr><td><code>--ownd-dur-slow</code></td><td>280ms</td><td>panel / tab transition</td></tr>
+          <tr><td><code>--ownd-dur-slower</code></td><td>600ms</td><td>entrance, step morph</td></tr>
+          <tr><td><code>--ownd-ease-standard</code></td><td>cubic-bezier(.2,.7,.2,1)</td><td>ทั่วไป</td></tr>
+          <tr><td><code>--ownd-ease-entrance</code></td><td>cubic-bezier(.2,.65,.2,1)</td><td>reveal/blur-fade-up</td></tr>
+          <tr><td><code>--ownd-ease-emphasized</code></td><td>cubic-bezier(.16,1,.3,1)</td><td>dropdown/overlay</td></tr>
+        </tbody>
+      </table>
+
+      <div class="ds-sub">Breakpoints</div>
+      <table class="ds-table">
+        <thead><tr><th>Token</th><th>Width</th><th>Target</th></tr></thead>
+        <tbody>
+          <tr><td><code>sm</code></td><td>480px</td><td>mobile artboard</td></tr>
+          <tr><td><code>md</code></td><td>768px</td><td>tablet · nav collapse</td></tr>
+          <tr><td><code>lg</code></td><td>1024px</td><td>desktop nav, 2-col→row</td></tr>
+          <tr><td><code>xl</code></td><td>1280px</td><td>max content width</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · BUTTONS
+         ============================================================ -->
+    <section class="ds-sec" id="c-buttons">
+      <div class="ds-sec-head"><h2>Buttons</h2><span class="tag">Component</span></div>
+      <p class="ds-sec-desc">ปุ่มหลักของแบรนด์เป็นทรง <b>pill</b> (radius 50px). มี 2 สูตรหลักตาม context: lime <code>#79F233</code> บนพื้นเข้ม และ solid <code>#00704C</code> บนพื้นขาว นอกจากนี้มี icon-only, segmented toggle และ ghost/menu item</p>
+
+      <!-- Primary on light -->
+      <div class="ds-sub">Primary (on light) — solid green</div>
+      <div class="ds-block">
+        <div class="ds-preview center">
+          <button class="bg-brand-500 hover:bg-brand-700 text-white rounded-xl py-3 px-7 font-semibold text-base transition inline-flex items-center gap-2 shadow-sm">
+            ส่งข้อมูล
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+          <button class="bg-brand-500 text-white rounded-xl py-3 px-7 font-semibold text-base opacity-50 cursor-not-allowed inline-flex items-center gap-2" disabled>Disabled</button>
+        </div>
+        <div class="ds-code"><span class="lang">html · tailwind (from Landing v6)</span><button class="ds-copy">Copy</button><pre>&lt;button class="bg-brand-500 hover:bg-brand-700 text-white
+        rounded-xl py-3 px-7 font-semibold transition
+        inline-flex items-center gap-2 shadow-sm"&gt;
+  ส่งข้อมูล
+  &lt;svg ...arrow.../&gt;
+&lt;/button&gt;</pre></div>
+      </div>
+
+      <!-- Primary on dark -->
+      <div class="ds-sub">Primary CTA (on dark) — lime pill</div>
+      <div class="ds-block">
+        <div class="ds-preview dark center">
+          <a class="btn-register">ลงทะเบียน</a>
+          <a class="cta">ลงทะเบียนฟรี ตรวจสอบสิทธิ์
+            <span class="arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0A2633" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
+          </a>
+        </div>
+        <div class="ds-code"><span class="lang">html + css (from Matching Hero)</span><button class="ds-copy">Copy</button><pre>&lt;a class="btn-register"&gt;ลงทะเบียน&lt;/a&gt;
+
+&lt;a class="cta"&gt;ลงทะเบียนฟรี ตรวจสอบสิทธิ์
+  &lt;span class="arrow"&gt;&lt;svg ...arrow.../&gt;&lt;/span&gt;
+&lt;/a&gt;
+
+/* CSS */
+.btn-register{padding:11px 28px;border-radius:50px;background:#79F233;
+  color:#0A2633;font-weight:500;font-size:14.5px;}
+.btn-register:hover{background:#8fff42;}
+.cta{gap:12px;padding:14px 28px;border-radius:50px;background:#79F233;
+  color:#0A2633;font-weight:500;font-size:16px;}
+.cta:hover{background:#8fff42;}</pre></div>
+      </div>
+
+      <!-- Icon-only + toggle -->
+      <div class="ds-sub">Icon-only & Segmented toggle</div>
+      <div class="ds-block">
+        <div class="ds-preview dark center">
+          <button class="menu-btn" aria-label="เมนู">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="role-toggle" role="tablist">
+            <button class="role-tab is-active" role="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></svg>BUYER</button>
+            <button class="role-tab" role="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11l4 4 8-8"/><path d="M14 7h7v7"/></svg>INVESTOR</button>
+          </div>
+        </div>
+        <div class="ds-code"><span class="lang">html + css (from Matching Hero)</span><button class="ds-copy">Copy</button><pre>&lt;button class="menu-btn"&gt;&lt;svg ...hamburger.../&gt;&lt;/button&gt;
+
+&lt;div class="role-toggle" role="tablist"&gt;
+  &lt;button class="role-tab is-active"&gt;&lt;svg/&gt;BUYER&lt;/button&gt;
+  &lt;button class="role-tab"&gt;&lt;svg/&gt;INVESTOR&lt;/button&gt;
+&lt;/div&gt;</pre></div>
+      </div>
+
+      <table class="ds-table">
+        <thead><tr><th>Variant</th><th>Class / utility</th><th>States</th><th>Size</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td>Primary (light)</td><td><code>bg-brand-500</code></td><td>default · <span class="ds-state">hover→#004D33</span> · disabled .5</td><td>py-3 px-7 · 16px</td><td>ปุ่มหลักบนพื้นขาว, submit</td></tr>
+          <tr><td>CTA lime (dark)</td><td><code>.cta</code></td><td>default · hover→#8fff42</td><td>14px 28px · 16px</td><td>CTA หลักบนพื้นเข้ม +ลูกศร</td></tr>
+          <tr><td>Register pill</td><td><code>.btn-register</code></td><td>default · hover→#8fff42</td><td>11px 28px · 14.5px</td><td>nav register, compact</td></tr>
+          <tr><td>Icon-only</td><td><code>.menu-btn</code></td><td>default · hover · :active scale.95</td><td>44×44 circle</td><td>hamburger, control</td></tr>
+          <tr><td>Segmented</td><td><code>.role-tab</code></td><td>default · <code>.is-active</code> (white)</td><td>h64 pill</td><td>Buyer/Investor toggle</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · CARDS
+         ============================================================ -->
+    <section class="ds-sec" id="c-cards">
+      <div class="ds-sec-head"><h2>Cards</h2><span class="tag">Component</span></div>
+      <p class="ds-sec-desc">การ์ดในระบบมีหลายตระกูล: <b>compare-card</b> (header + rows + icon), <b>note-card</b> (alert บนพื้นขาว), <b>step-card</b> (timeline gradient เขียว) และการ์ดฟอร์ม/contact แบบ Tailwind จาก Landing v6</p>
+
+      <!-- compare-card anatomy -->
+      <div class="ds-sub">Compare card — anatomy: header (icon+title) · body rows</div>
+      <div class="ds-block">
+        <div class="ds-preview dark">
+          <article class="compare-card">
+            <div class="hd"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg></span><h4>เช่าเพื่อซื้อกับ OWND</h4></div>
+            <div class="rowlab">ข้อดี</div>
+            <p class="rowtxt">เข้าอยู่ได้ทันที · ไม่ต้องผ่านเกณฑ์แบงก์ · ค่างวดสะสมเป็นทรัพย์สิน</p>
+            <div class="rowlab">เหมาะกับใคร</div>
+            <p class="rowtxt">คนที่อยากมีบ้านแต่กู้แบงก์ยังไม่ผ่าน</p>
+          </article>
+          <article class="compare-card alt">
+            <div class="hd"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg></span><h4>กู้ซื้อบ้านกับธนาคาร</h4></div>
+            <div class="rowlab">ข้อดี</div>
+            <p class="rowtxt">เป็นเจ้าของทันทีเมื่อโอน · ดอกเบี้ยต่ำกว่าสินเชื่อทั่วไป</p>
+            <div class="rowlab">ความเสี่ยง</div>
+            <p class="rowtxt">ต้องมีเงินดาวน์ + ผ่านเกณฑ์รายได้และเครดิต</p>
+          </article>
+        </div>
+        <div class="ds-code"><span class="lang">html + css (Matching Hero)</span><button class="ds-copy">Copy</button><pre>&lt;article class="compare-card"&gt;        &lt;!-- add .alt for bank variant --&gt;
+  &lt;div class="hd"&gt;
+    &lt;span class="ico"&gt;&lt;svg/&gt;&lt;/span&gt;
+    &lt;h4&gt;เช่าเพื่อซื้อกับ OWND&lt;/h4&gt;
+  &lt;/div&gt;
+  &lt;div class="rowlab"&gt;ข้อดี&lt;/div&gt;
+  &lt;p class="rowtxt"&gt;เข้าอยู่ได้ทันที · ...&lt;/p&gt;
+&lt;/article&gt;</pre></div>
+      </div>
+
+      <!-- note + step -->
+      <div class="ds-sub">Note card (alert) & Step card (timeline)</div>
+      <div class="ds-block">
+        <div class="ds-preview">
+          <div class="note-card">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg></span>
+            <h4>OWND</h4>
+            <p>Lorem ipsum dolor sit amet consectetur. Nisl viverra malesuada blandit neque.</p>
+          </div>
+          <article class="step-card">
+            <h4>1. Lorem ipsum</h4>
+            <span class="step-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Lorem ipsum</span>
+            <p>Lorem ipsum dolor sit amet consectetur. Lectus consequat sed scelerisque.</p>
+          </article>
+        </div>
+        <div class="ds-code"><span class="lang">html + css (Matching Hero)</span><button class="ds-copy">Copy</button><pre>&lt;div class="note-card"&gt;
+  &lt;span class="ico"&gt;&lt;svg ...x-circle.../&gt;&lt;/span&gt;
+  &lt;h4&gt;OWND&lt;/h4&gt;
+  &lt;p&gt;...&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;article class="step-card"&gt;
+  &lt;h4&gt;1. Lorem ipsum&lt;/h4&gt;
+  &lt;span class="step-pill"&gt;&lt;svg/&gt;Lorem ipsum&lt;/span&gt;
+  &lt;p&gt;...&lt;/p&gt;
+&lt;/article&gt;</pre></div>
+      </div>
+
+      <!-- Tailwind contact card from Landing -->
+      <div class="ds-sub">Contact / form card (Landing v6 · Tailwind)</div>
+      <div class="ds-block">
+        <div class="ds-preview">
+          <a href="#" class="bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-3 hover:border-brand-500/40 hover:shadow-md transition" style="min-width:220px;text-decoration:none">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(0,112,76,.1)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00704C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div class="flex flex-col"><span class="text-[11px] text-gray-400">โทรหาเรา</span><span class="text-sm font-semibold" style="color:#0A2633">02-124-4555</span></div>
+          </a>
+        </div>
+        <div class="ds-code"><span class="lang">html · tailwind (Landing v6)</span><button class="ds-copy">Copy</button><pre>&lt;a class="bg-white border border-gray-100 rounded-2xl p-4
+      flex items-center gap-3 hover:border-brand-500/40
+      hover:shadow-md transition"&gt;
+  &lt;div class="w-10 h-10 rounded-xl flex items-center
+        justify-center" style="background:rgba(0,112,76,.1)"&gt;
+    &lt;svg ...phone.../&gt;
+  &lt;/div&gt;
+  &lt;div class="flex flex-col"&gt;
+    &lt;span class="text-[11px] text-gray-400"&gt;โทรหาเรา&lt;/span&gt;
+    &lt;span class="text-sm font-semibold"&gt;02-124-4555&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/a&gt;</pre></div>
+      </div>
+
+      <table class="ds-table">
+        <thead><tr><th>Card</th><th>Class</th><th>Anatomy</th><th>Surface</th></tr></thead>
+        <tbody>
+          <tr><td>Compare</td><td><code>.compare-card</code> <code>.alt</code></td><td>header(icon+title) → row label → row text</td><td>green gradient on dark</td></tr>
+          <tr><td>Note / alert</td><td><code>.note-card</code></td><td>icon-box → title → body</td><td>white, shadow</td></tr>
+          <tr><td>Step</td><td><code>.step-card</code></td><td>title → pill → body (+icon node)</td><td>green gradient</td></tr>
+          <tr><td>Contact</td><td>Tailwind <code>rounded-2xl</code></td><td>icon-box → label + value</td><td>white, border</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · INPUTS  (Landing v6 only — Tailwind)
+         ============================================================ -->
+    <section class="ds-sec" id="c-inputs">
+      <div class="ds-sec-head"><h2>Text fields / Inputs</h2><span class="tag">Component · Landing v6</span></div>
+      <p class="ds-sec-desc">ฟอร์มจริงมีเฉพาะใน Landing v6 (section Get Started) ประกอบด้วย text input, custom select dropdown และ checkbox (PDPA) ทุกตัวมี label + helper. Default = <code>border-gray-200 bg-gray-50/50</code>, Focus = <code>border-#00704C bg-white</code> <em>(หมายเหตุ: ไม่มี textarea ในไฟล์ต้นฉบับ — ตัวอย่าง textarea ด้านล่างเป็น proposed ตามสไตล์เดียวกัน)</em></p>
+
+      <div class="ds-block">
+        <div class="ds-preview col" style="max-width:460px">
+          <label class="block text-sm font-medium mb-1" style="color:#475569">ชื่อ-นามสกุล</label>
+          <input placeholder="เช่น สมชาย ใจดี" class="rounded-xl border border-gray-200 p-3 w-full text-sm mb-1 focus:outline-none focus:border-brand-500 focus:bg-white transition" style="background:rgba(249,250,251,.5)">
+          <span class="text-xs text-gray-400 mb-3">Default state</span>
+
+          <label class="block text-sm font-medium mb-1" style="color:#475569">เบอร์โทรศัพท์ <span style="color:#00704C">· focus</span></label>
+          <input value="08X-XXX-XXXX" class="rounded-xl border p-3 w-full text-sm mb-3 bg-white" style="border-color:#00704C;box-shadow:0 0 0 2px rgba(0,112,76,.15)">
+
+          <label class="block text-sm font-medium mb-1" style="color:#475569">อีเมล <span style="color:#ef4444">· error</span></label>
+          <input value="notanemail" class="rounded-xl border p-3 w-full text-sm mb-1 bg-white" style="border-color:#ef4444;box-shadow:0 0 0 2px rgba(239,68,68,.12)">
+          <span class="text-xs mb-3" style="color:#ef4444">รูปแบบอีเมลไม่ถูกต้อง</span>
+
+          <label class="block text-sm font-medium mb-1" style="color:#475569">สนใจเป็น (custom select)</label>
+          <button class="w-full rounded-xl border border-gray-200 p-3 pr-10 text-sm text-left bg-white inline-flex items-center gap-2 mb-3" style="color:#0A2633">
+            <span class="w-5 h-5 rounded-md flex items-center justify-center" style="background:rgba(0,112,76,.1)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00704C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1Z"/></svg></span>
+            ผู้เช่าเพื่อซื้อ — อยากมีบ้าน
+          </button>
+
+          <label class="block text-sm font-medium mb-1" style="color:#475569">รายละเอียด (textarea · proposed)</label>
+          <textarea rows="3" placeholder="พิมพ์ข้อความ..." class="rounded-xl border border-gray-200 p-3 w-full text-sm mb-3 focus:outline-none focus:border-brand-500 focus:bg-white transition" style="background:rgba(249,250,251,.5);resize:vertical"></textarea>
+
+          <label class="flex items-start gap-3 cursor-pointer" style="padding:14px 16px;border-radius:14px;background:rgba(61,177,64,.06);border:1px solid rgba(61,177,64,.25)">
+            <span style="width:20px;height:20px;flex:none;margin-top:1px;border-radius:6px;background:#00704C;border:1px solid #00704C;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="text-sm" style="color:#0A2633">ฉันยินยอมให้ <b>OWND</b> เก็บและใช้ข้อมูลตาม <a href="#" style="color:#00704C;font-weight:500">นโยบายความเป็นส่วนตัว</a></span>
+          </label>
+        </div>
+        <div class="ds-code"><span class="lang">html · tailwind (Landing v6)</span><button class="ds-copy">Copy</button><pre>&lt;label class="block text-sm font-medium mb-1.5 text-gray-600"&gt;ชื่อ-นามสกุล&lt;/label&gt;
+&lt;input placeholder="เช่น สมชาย ใจดี"
+  class="rounded-xl border border-gray-200 bg-gray-50/50 p-3 w-full text-sm mb-4
+         focus:outline-none focus:border-brand-500 focus:bg-white transition" /&gt;
+
+&lt;!-- PDPA checkbox (custom box, real input is sr-only) --&gt;
+&lt;label class="flex items-start gap-3" style="background:rgba(61,177,64,.06);
+       border:1px solid rgba(61,177,64,.25);border-radius:14px;padding:14px 16px"&gt;
+  &lt;input type="checkbox" class="sr-only" /&gt;
+  &lt;span&gt;&lt;svg ...check.../&gt;&lt;/span&gt; ฉันยินยอม...
+&lt;/label&gt;</pre></div>
+      </div>
+
+      <table class="ds-table">
+        <thead><tr><th>Field</th><th>Default</th><th>Focus</th><th>Error</th><th>Disabled</th></tr></thead>
+        <tbody>
+          <tr><td>Text input</td><td><code>border-gray-200 bg-gray-50/50</code></td><td><code>border-#00704C bg-white</code></td><td>border-#ef4444 + helper</td><td>opacity .5 / cursor</td></tr>
+          <tr><td>Select (custom)</td><td>gray border, placeholder gray-400</td><td>ring-2 #00704C/.15</td><td>—</td><td>—</td></tr>
+          <tr><td>Checkbox (PDPA)</td><td>1.5px gray box</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>Textarea <span class="ds-state" style="background:#FEF3C7;color:#B45309">proposed</span></td><td>เหมือน text input + <code>resize-y</code></td><td>เหมือน text input</td><td>เหมือน text input</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · RADIO & SWITCH
+         ============================================================ -->
+    <section class="ds-sec" id="c-selection">
+      <div class="ds-sec-head"><h2>Radio &amp; Switch</h2><span class="tag">Component · interactive</span></div>
+      <p class="ds-sec-desc">Selection controls เสริมจาก Checkbox — ทั้งคู่ใช้ native input ซ่อนไว้ + control แบบ custom (ใช้สีแบรนด์ <code>#00704C</code>) ติ๊ก/สลับได้จริงโดยไม่ต้องใช้ JS</p>
+
+      <div class="ds-sub">Radio group</div>
+      <div class="ds-block">
+        <div class="ds-preview col" style="gap:14px;max-width:460px">
+          <label class="ds-radio"><input type="radio" name="demo-r" checked><span class="dot"></span><span class="rtext">ผู้เช่าเพื่อซื้อ — อยากมีบ้าน</span></label>
+          <label class="ds-radio"><input type="radio" name="demo-r"><span class="dot"></span><span class="rtext">นักลงทุน — มีบ้านให้เช่า</span></label>
+          <label class="ds-radio is-disabled"><input type="radio" name="demo-r" disabled><span class="dot"></span><span class="rtext">พาร์ทเนอร์ (disabled)</span></label>
+        </div>
+        <div class="ds-code"><span class="lang">html + css (no JS)</span><button class="ds-copy">Copy</button><pre>&lt;label class="ds-radio"&gt;
+  &lt;input type="radio" name="role" checked&gt;
+  &lt;span class="dot"&gt;&lt;/span&gt;
+  &lt;span class="rtext"&gt;ผู้เช่าเพื่อซื้อ&lt;/span&gt;
+&lt;/label&gt;
+
+.ds-radio input:checked + .dot{border-color:#00704C;}
+.ds-radio input:checked + .dot::after{transform:scale(1);} /* green dot */</pre></div>
+      </div>
+
+      <div class="ds-sub">Switch / Toggle</div>
+      <div class="ds-block">
+        <div class="ds-preview col" style="gap:16px;max-width:460px">
+          <label class="ds-switch"><input type="checkbox" checked><span class="track"></span><span class="stext">แจ้งเตือนทางอีเมล</span></label>
+          <label class="ds-switch"><input type="checkbox"><span class="track"></span><span class="stext">โหมดกลางคืน</span></label>
+        </div>
+        <div class="ds-code"><span class="lang">html + css (no JS)</span><button class="ds-copy">Copy</button><pre>&lt;label class="ds-switch"&gt;
+  &lt;input type="checkbox" checked&gt;
+  &lt;span class="track"&gt;&lt;/span&gt;
+  &lt;span class="stext"&gt;แจ้งเตือนทางอีเมล&lt;/span&gt;
+&lt;/label&gt;
+
+.ds-switch input:checked + .track{background:#00704C;}
+.ds-switch input:checked + .track::after{transform:translateX(18px);}</pre></div>
+      </div>
+
+      <table class="ds-table">
+        <thead><tr><th>Control</th><th>Off / default</th><th>On / checked</th><th>Disabled</th></tr></thead>
+        <tbody>
+          <tr><td>Radio</td><td>ring 1.5px gray</td><td>green ring + dot <code>#00704C</code></td><td>opacity .5</td></tr>
+          <tr><td>Switch</td><td>track <code>#cbd5d3</code></td><td>track <code>#00704C</code> + knob ขวา</td><td>opacity .5</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · DROPDOWNS & MENUS
+         ============================================================ -->
+    <section class="ds-sec" id="c-dropdowns">
+      <div class="ds-sec-head"><h2>Dropdowns &amp; Menus</h2><span class="tag">Component · interactive</span></div>
+      <p class="ds-sec-desc">Dropdown ในระบบมี 3 ชนิด — <b>(1)</b> form select แบบ custom (จาก Get-Started ของ Landing v6), <b>(2)</b> nav submenu แบบ accordion และ <b>(3)</b> language switcher ทั้งหมด <b>คลิกได้จริง</b> ลองกดดูในกล่อง preview · icon/ธงใช้ asset จริงจากโฟลเดอร์ <code>assets/menu/</code></p>
+
+      <!-- 1) Form select -->
+      <div class="ds-sub">1 · Form select — “สนใจเป็น” (custom dropdown text field)</div>
+      <div class="ds-block">
+        <div class="ds-preview" style="min-height:200px;align-items:flex-start">
+          <div class="ds-select" style="margin-top:0">
+            <button type="button" class="ds-select__btn is-placeholder">
+              <span>ผู้เช่าซื้อ / นักลงทุน</span>
+              <span class="ds-select__chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+            </button>
+            <div class="ds-select__panel">
+              <button type="button" class="ds-select__opt" data-label="ผู้เช่าเพื่อซื้อ — อยากมีบ้าน">
+                <span class="oico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1Z"/></svg></span>
+                <span class="flex-1">ผู้เช่าเพื่อซื้อ — อยากมีบ้าน</span>
+                <span class="ocheck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              </button>
+              <button type="button" class="ds-select__opt" data-label="นักลงทุน — มีบ้านให้เช่า">
+                <span class="oico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11l4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
+                <span class="flex-1">นักลงทุน — มีบ้านให้เช่า</span>
+                <span class="ocheck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="ds-code"><span class="lang">html + css + js (Landing v6 pattern)</span><button class="ds-copy">Copy</button><pre>&lt;div class="ds-select"&gt;
+  &lt;button class="ds-select__btn is-placeholder"&gt;
+    &lt;span&gt;ผู้เช่าซื้อ / นักลงทุน&lt;/span&gt;
+    &lt;span class="ds-select__chev"&gt;&lt;svg ...chevron.../&gt;&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;div class="ds-select__panel"&gt;
+    &lt;button class="ds-select__opt" data-label="ผู้เช่าเพื่อซื้อ — อยากมีบ้าน"&gt;
+      &lt;span class="oico"&gt;&lt;svg ...home.../&gt;&lt;/span&gt;
+      &lt;span class="flex-1"&gt;ผู้เช่าเพื่อซื้อ — อยากมีบ้าน&lt;/span&gt;
+      &lt;span class="ocheck"&gt;&lt;svg ...check.../&gt;&lt;/span&gt;
+    &lt;/button&gt;
+    &lt;button class="ds-select__opt" data-label="นักลงทุน — มีบ้านให้เช่า"&gt;...&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- JS: .ds-select__btn toggles .is-open; option click → set .is-selected,
+     copy icon+label into the trigger, close. Outside-click closes. --&gt;</pre></div>
+      </div>
+
+      <!-- 2) Nav submenu accordion -->
+      <div class="ds-sub">2 · Nav submenu — accordion (chevron rotate + max-height)</div>
+      <div class="ds-block">
+        <div class="ds-preview dark center" style="align-items:flex-start;min-height:280px">
+          <div class="menu-panel">
+            <button type="button" class="menu-item is-expanded" data-toggle>
+              <span class="mi-ico"><img class="mi-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAAAIZJREFUeAHtlA0KgCAMhV/RAbxqN+io3aBuYBtklPiXy0TwAxV0urdNBToRBt+CJiA9nBhRmClmwCrwknv0/0VgvPoU2zVhO9ecva9+DUKk1EfkoK0UudSlpKh4BFVTtFNTgj9p5S4UwWyMMmBxy2NGn+BjitfgumYkfqNBQUDsoUly3snnAInuLh+baZmCAAAAAElFTkSuQmCC" alt=""></span>
+              <span class="mi-lab">ระบบเช่าเพื่อซื้อ</span>
+              <span class="mi-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span>
+            </button>
+            <div class="menu-sub">
+              <a class="menu-item is-active"><span class="mi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1Z"/></svg></span><span class="mi-lab">Own Matching</span></a>
+              <a class="menu-item"><span class="mi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l6-4 6 4v12"/><path d="M15 21V11l6-3v13"/><line x1="3" y1="21" x2="21" y2="21"/></svg></span><span class="mi-lab">Own Sub</span></a>
+              <a class="menu-item"><span class="mi-ico"><img class="mi-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAAAL1JREFUeAHtlOERgyAMhXOdwBHcBDaRTdrNOkJHYAS6QUqu6fXJARr1J98dJyaaZx4I0WBwKcw85fHI48V/ZL7QWXKROY/IbSQ301GguFyddKNxV+QmspJfCr0Cal2vuypY4Oe5A8GkRReNeTaCAqsAr782kRGsdyut0Cna9KazgEVe74N2kcCisGUFdyy6ayxyfZG7W3iPAO6SCJ1I3GOuEK4KtGwy/2itB2ljPcRrPCqe/LWwZp1dYDAw8wHRUz2eBWDyDAAAAABJRU5ErkJggg==" alt=""></span><span class="mi-lab">Own Unlock</span></a>
+            </div>
+            <button type="button" class="menu-item" data-toggle>
+              <span class="mi-ico"><img class="mi-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAAANpJREFUeAHtkwENAjEMRQsKkHASzgGTgAQc3Dk4HCABCSdhOEDCJICD0iUdNL1r2AYkhNxLmixd+//SbQALfwMi9hRH+DQkuqHw+KSFWqi5iWIql8SvFFuogU95YBFUey2bNFADNTqKIEaAybRUaJ9OaHBRBr7UIBjC0bTjGmkQcSUGj+acGl52ek/rrOE9Xt6DNLjNnYRH1xv957RYKSaVfMkBbYIa0Qi1KKGJMefLnqllIHKDkY+/Oz7hBnKZExJiJ5XzYoQ7yMEyMGqj6Sgm6OAb8AgHWPg57pMoo14OUTt1AAAAAElFTkSuQmCC" alt=""></span>
+              <span class="mi-lab">ข่าวสาร &amp; บทความ</span>
+              <span class="mi-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span>
+            </button>
+            <div class="menu-sub">
+              <a class="menu-item"><span class="mi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg></span><span class="mi-lab">ข่าวสาร</span></a>
+              <a class="menu-item"><span class="mi-ico"><img class="mi-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAAAFNJREFUeAHt1UEKACAIBMAt+v+Xq4vQIVMjRMg5FQShCwokQVkvfcIDZaJzRRKoMqCeajNyzaCB+fmEe7er0LcCKYMbMTOwiJmBZWblLBLlPvjAAHmIICZp2Em+AAAAAElFTkSuQmCC" alt=""></span><span class="mi-lab">บทความ</span></a>
+            </div>
+          </div>
+        </div>
+        <div class="ds-code"><span class="lang">html + css + js (Matching Hero)</span><button class="ds-copy">Copy</button><pre>&lt;button class="menu-item is-expanded" data-toggle&gt;
+  &lt;span class="mi-ico"&gt;&lt;img class="mi-img" src="assets/menu/services.png"&gt;&lt;/span&gt;
+  &lt;span class="mi-lab"&gt;ระบบเช่าเพื่อซื้อ&lt;/span&gt;
+  &lt;span class="mi-chev"&gt;&lt;svg ...chevron-right.../&gt;&lt;/span&gt;
+&lt;/button&gt;
+&lt;div class="menu-sub"&gt;
+  &lt;a class="menu-item is-active"&gt;&lt;span class="mi-ico"&gt;&lt;svg/&gt;&lt;/span&gt;&lt;span class="mi-lab"&gt;Own Matching&lt;/span&gt;&lt;/a&gt;
+  &lt;a class="menu-item"&gt;...&lt;/a&gt;
+&lt;/div&gt;
+
+/* CSS */
+.menu-sub{overflow:hidden;max-height:0;transition:max-height .32s ease;}
+.menu-item.is-expanded + .menu-sub{max-height:360px;}
+.menu-item.is-expanded .mi-chev{transform:rotate(90deg);}
+/* JS: data-toggle click → this.classList.toggle('is-expanded') */</pre></div>
+      </div>
+
+      <!-- 3) Language switcher -->
+      <div class="ds-sub">3 · Language switcher — single-select with flags</div>
+      <div class="ds-block">
+        <div class="ds-preview dark center" style="align-items:flex-start;min-height:220px">
+          <div class="menu-panel">
+            <button type="button" class="menu-item is-expanded" data-toggle>
+              <span class="mi-ico"><img class="mi-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAAAQNJREFUeAHdVIERgyAMTDuBIziCI7iBI7Qb2A3oCN3AEewGdhNGYAQKbai5CB7B867n3yGayOcTAgCHh0VAIc6wM07+sUXhh8Qh5ds9AxFcojVuic5dI82gx/kFpXDqKjcMKq2J3avX3F4aRCHRRGwD2gbYCswiqL27ccN3w9V7EVxMbpDWLtGzf2rmr0ACUhaPMeJXQT3OSkJ+jWRwYf/osOlYPlNCrojSXxBSwoFl24rIYVmOkRF2sYAichaks98u89DMb3BUMfJmjTwhxJNNZIQD2qcWKpvRCXbumhRkZ4KRr154JIvGf5dc1yHDZ8L/wLmDEti595uEP3RT3pn4e7wBEJP+gi+uOv4AAAAASUVORK5CYII=" alt=""></span>
+              <span class="mi-lab">ภาษา</span>
+              <span class="mi-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></span>
+            </button>
+            <div class="menu-sub">
+              <button type="button" class="menu-item" data-lang="th">
+                <span class="menu-flag"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAAAKhJREFUeAHt1bEJwlAQBuD/jjdAUCyyghBXCLiEIBZZwQnUDVwhhWQEO0lrJQh29mn0mQnemWSBNPmLQL7i8bqfO7g7YNJD2qeYJxkMKQakIuXm+8ylmK2OgB1AYJB9E5D8mn8EAgNqeV9vBiLx3lMDFGSyTnfUClxVfcBEb9H4A1wcL8A0/jlw/v4AE33ZqYVwAokEO3cH5xItM1UZ9OBYQLmtXzkmff6ipTFvFUc0vwAAAABJRU5ErkJggg==" alt="TH"></span>
+                <span class="mi-lab">TH</span>
+                <span class="menu-lang-check is-checked"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              </button>
+              <button type="button" class="menu-item" data-lang="en">
+                <span class="menu-flag"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAAALVJREFUeAHtlcENwjAMRW23AzTtAkUwAuLaVboBIwAbdIVu0jNCbIDoAEmUDYJ7DIc4EsoBKe+Q6Es/dqQfOQAFAdwWrfVYVdUQM667Y6D79wMEFqXUXBtjroh48d5H3R4x1IKfGbm2Ii5+hkxsFyfeG8hHQ5CZ/2+AT3UQn8MvlAxE0FqblMG6PwW6f91TjpUM0ho4yIcjHrs3yATXnuqu6yb+cByP1kEwR/U3RLS0bTtDQeID2so1Qp0knFQAAAAASUVORK5CYII=" alt="EN"></span>
+                <span class="mi-lab">EN</span>
+                <span class="menu-lang-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="ds-code"><span class="lang">html + css + js (Matching Hero)</span><button class="ds-copy">Copy</button><pre>&lt;div class="menu-sub"&gt;
+  &lt;button class="menu-item" data-lang="th"&gt;
+    &lt;span class="menu-flag"&gt;&lt;img src="assets/menu/flag-th.png"&gt;&lt;/span&gt;
+    &lt;span class="mi-lab"&gt;TH&lt;/span&gt;
+    &lt;span class="menu-lang-check is-checked"&gt;&lt;svg ...check.../&gt;&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;button class="menu-item" data-lang="en"&gt;...&lt;/button&gt;
+&lt;/div&gt;
+&lt;!-- JS: data-lang click → clear all .menu-lang-check.is-checked,
+     add .is-checked to the clicked one (single-select) --&gt;</pre></div>
+      </div>
+
+      <table class="ds-table">
+        <thead><tr><th>Dropdown</th><th>Trigger</th><th>Behaviour</th><th>Selection</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td>Form select</td><td><code>.ds-select__btn</code></td><td>open/close · chevron 180° · outside-click close</td><td>single, icon+label copied to trigger</td><td>Landing v6</td></tr>
+          <tr><td>Nav submenu</td><td><code>.menu-item[data-toggle]</code></td><td>accordion · chevron 90° · max-height</td><td>navigate (link)</td><td>Matching Hero</td></tr>
+          <tr><td>Language</td><td><code>.menu-item[data-lang]</code></td><td>single-select check</td><td>1 active · green check <code>#5BD239</code></td><td>Matching Hero</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · FORM & CHECKBOX
+         ============================================================ -->
+    <section class="ds-sec" id="c-form">
+      <div class="ds-sec-head"><h2>Form &amp; Checkbox</h2><span class="tag">Component · interactive</span></div>
+      <p class="ds-sec-desc">Checkbox ใช้ native <code>&lt;input type="checkbox"&gt;</code> ซ่อนไว้ + กล่อง custom (ติ๊กได้จริง ไม่ต้องใช้ JS) และ <b>Form</b> คือการประกอบ label + input + select + checkbox + submit เป็นการ์ดเดียว (อิงจาก section “ปรึกษาฟรี” ของ Landing v6)</p>
+
+      <!-- Checkbox states -->
+      <div class="ds-sub">Checkbox — states (คลิกเพื่อสลับได้)</div>
+      <div class="ds-block">
+        <div class="ds-preview col" style="gap:14px;max-width:520px">
+          <!-- inline unchecked -->
+          <label class="ds-check">
+            <input type="checkbox">
+            <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="ctext">Unchecked (default) — รับข่าวสารโปรโมชัน</span>
+          </label>
+          <!-- inline checked -->
+          <label class="ds-check">
+            <input type="checkbox" checked>
+            <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="ctext">Checked — ยอมรับเงื่อนไขการใช้งาน</span>
+          </label>
+          <!-- disabled -->
+          <label class="ds-check is-disabled">
+            <input type="checkbox" disabled>
+            <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="ctext">Disabled — ตัวเลือกที่ปิดใช้งาน</span>
+          </label>
+          <!-- card style (PDPA) -->
+          <label class="ds-check card">
+            <input type="checkbox" checked>
+            <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="ctext">Card / PDPA — ฉันยินยอมให้ <b>OWND</b> เก็บและใช้ข้อมูลตาม <a href="#">นโยบายความเป็นส่วนตัว</a></span>
+          </label>
+        </div>
+        <div class="ds-code"><span class="lang">html + css (no JS — native input)</span><button class="ds-copy">Copy</button><pre>&lt;label class="ds-check"&gt;            &lt;!-- add .card for boxed PDPA, .is-disabled to disable --&gt;
+  &lt;input type="checkbox"&gt;
+  &lt;span class="box"&gt;&lt;svg ...check.../&gt;&lt;/span&gt;
+  &lt;span class="ctext"&gt;รับข่าวสารโปรโมชัน&lt;/span&gt;
+&lt;/label&gt;
+
+/* CSS — visual driven purely by :checked, no JS */
+.ds-check input{position:absolute;opacity:0;}
+.ds-check .box{width:20px;height:20px;border-radius:6px;border:1.5px solid rgba(10,38,51,.2);background:#fff;}
+.ds-check input:checked + .box{background:#00704C;border-color:#00704C;}
+.ds-check input:checked + .box svg{opacity:1;}
+.ds-check.card:has(input:checked){background:rgba(61,177,64,.06);border-color:rgba(61,177,64,.25);}</pre></div>
+      </div>
+
+      <!-- Full assembled form -->
+      <div class="ds-sub">Form — assembled (label · input · select · checkbox · submit)</div>
+      <div class="ds-block">
+        <div class="ds-preview center" style="background:#f8f9f6;padding:32px 20px" data-responsive>
+          <div class="vp-wrap" style="display:flex;justify-content:center">
+          <form class="ds-form" onsubmit="return false">
+            <div class="ds-form__head">
+              <span class="hico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg></span>
+              <span><b>ปรึกษาฟรี</b><small>ไม่มีค่าใช้จ่าย ไม่ผูกมัด</small></span>
+            </div>
+
+            <label class="fl">ชื่อ-นามสกุล</label>
+            <input class="fi" placeholder="เช่น สมชาย ใจดี">
+
+            <label class="fl">เบอร์โทรศัพท์</label>
+            <input class="fi" placeholder="08X-XXX-XXXX">
+
+            <label class="fl">สนใจเป็น</label>
+            <div class="ds-select" style="margin-bottom:16px">
+              <button type="button" class="ds-select__btn is-placeholder">
+                <span>ผู้เช่าซื้อ / นักลงทุน</span>
+                <span class="ds-select__chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+              </button>
+              <div class="ds-select__panel">
+                <button type="button" class="ds-select__opt" data-label="ผู้เช่าเพื่อซื้อ — อยากมีบ้าน">
+                  <span class="oico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1Z"/></svg></span>
+                  <span class="flex-1">ผู้เช่าเพื่อซื้อ — อยากมีบ้าน</span>
+                  <span class="ocheck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                </button>
+                <button type="button" class="ds-select__opt" data-label="นักลงทุน — มีบ้านให้เช่า">
+                  <span class="oico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11l4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
+                  <span class="flex-1">นักลงทุน — มีบ้านให้เช่า</span>
+                  <span class="ocheck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+                </button>
+              </div>
+            </div>
+
+            <label class="ds-check card" style="margin-bottom:16px">
+              <input type="checkbox">
+              <span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+              <span class="ctext">ฉันยินยอมให้ <b>OWND</b> เก็บและใช้ข้อมูลตาม <a href="#" onclick="event.preventDefault()">นโยบายความเป็นส่วนตัว</a></span>
+            </label>
+
+            <button type="submit" class="ds-form__submit">
+              <span>ส่งข้อมูล</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+
+            <div class="ds-form__trust">
+              <div class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>ตอบกลับใน 1 ชม.</span></div>
+              <div class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>ข้อมูลปลอดภัย</span></div>
+              <div class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>ติดต่อตามนัด</span></div>
+            </div>
+          </form>
+          </div>
+        </div>
+        <div class="ds-code"><span class="lang">html + css (composition · Landing v6)</span><button class="ds-copy">Copy</button><pre>&lt;form class="ds-form"&gt;
+  &lt;div class="ds-form__head"&gt;&lt;span class="hico"&gt;&lt;svg/&gt;&lt;/span&gt;
+    &lt;span&gt;&lt;b&gt;ปรึกษาฟรี&lt;/b&gt;&lt;small&gt;ไม่มีค่าใช้จ่าย&lt;/small&gt;&lt;/span&gt;&lt;/div&gt;
+
+  &lt;label class="fl"&gt;ชื่อ-นามสกุล&lt;/label&gt;
+  &lt;input class="fi" placeholder="เช่น สมชาย ใจดี"&gt;
+
+  &lt;label class="fl"&gt;เบอร์โทรศัพท์&lt;/label&gt;
+  &lt;input class="fi" placeholder="08X-XXX-XXXX"&gt;
+
+  &lt;label class="fl"&gt;สนใจเป็น&lt;/label&gt;
+  &lt;div class="ds-select"&gt;...custom select...&lt;/div&gt;
+
+  &lt;label class="ds-check card"&gt;...PDPA checkbox...&lt;/label&gt;
+
+  &lt;button class="ds-form__submit"&gt;ส่งข้อมูล &lt;svg ...arrow.../&gt;&lt;/button&gt;
+  &lt;div class="ds-form__trust"&gt;...3 trust badges...&lt;/div&gt;
+&lt;/form&gt;</pre></div>
+      </div>
+
+      <table class="ds-table">
+        <thead><tr><th>Control</th><th>Default</th><th>Checked / Active</th><th>Disabled</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td>Checkbox</td><td>1.5px box <code>rgba(10,38,51,.2)</code></td><td>fill <code>#00704C</code> + white check</td><td>opacity .5</td><td>native input, no JS</td></tr>
+          <tr><td>Checkbox (card)</td><td>bg <code>rgba(10,38,51,.025)</code></td><td>bg <code>rgba(61,177,64,.06)</code> + green border</td><td>—</td><td>PDPA consent</td></tr>
+          <tr><td>Form input</td><td><code>border-#e5e7eb bg-gray-50</code></td><td>focus <code>#00704C</code> + ring</td><td>opacity .5</td><td><code>.fi</code></td></tr>
+          <tr><td>Submit</td><td><code>#00704C</code></td><td>hover <code>#004D33</code></td><td>—</td><td>full-width</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · TABLES (PROPOSED — not in source)
+         ============================================================ -->
+    <section class="ds-sec" id="c-tables">
+      <div class="ds-sec-head"><h2>Tables <span style="font-size:13px;color:#B45309;font-weight:600">· proposed</span></h2><span class="tag">Component · new</span></div>
+      <p class="ds-sec-desc"><b>หมายเหตุ:</b> ไฟล์ต้นฉบับทั้งสองไม่มี <code>&lt;table&gt;</code> เลย ตารางด้านล่างจึงเป็น component ที่ <b>สร้างใหม่ตามแบรนด์</b> — ใช้ ink <code>#0A2633</code> เป็น header, zebra <code>#f7faf8</code>, hover tint <code>#E6F5EC</code> และ radius 12px (เป็นสไตล์เดียวกับตาราง spec ในเอกสารนี้)</p>
+
+      <div class="ds-block">
+        <div class="ds-preview col">
+          <table class="ds-table" style="margin:0">
+            <thead><tr><th>แผน</th><th>เริ่มต้น</th><th>ระยะลงทุน</th><th>ปันผล</th><th>สถานะ</th></tr></thead>
+            <tbody>
+              <tr><td>Own Matching</td><td>฿500K</td><td>3 ปี+</td><td>รายเดือน</td><td><span class="ds-state">Active</span></td></tr>
+              <tr><td>Own Sub</td><td>฿250K</td><td>2 ปี+</td><td>รายไตรมาส</td><td><span class="ds-state">Active</span></td></tr>
+              <tr><td>Own Unlock</td><td>฿1M</td><td>5 ปี+</td><td>รายเดือน</td><td><span class="ds-state" style="background:#FEF3C7;color:#B45309">Pending</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="ds-code"><span class="lang">html + css (proposed brand style)</span><button class="ds-copy">Copy</button><pre>&lt;table class="ds-table"&gt;
+  &lt;thead&gt;&lt;tr&gt;&lt;th&gt;แผน&lt;/th&gt;&lt;th&gt;เริ่มต้น&lt;/th&gt;...&lt;/tr&gt;&lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;&lt;td&gt;Own Matching&lt;/td&gt;&lt;td&gt;฿500K&lt;/td&gt;...&lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+/* CSS */
+.ds-table{width:100%;border-collapse:collapse;border:1px solid #e6ece8;border-radius:12px;overflow:hidden;}
+.ds-table thead th{background:#0A2633;color:#cdebd9;text-transform:uppercase;font-size:11px;padding:11px 14px;text-align:left;}
+.ds-table td{padding:11px 14px;border-top:1px solid #eef2ef;}
+.ds-table tbody tr:nth-child(even){background:#f7faf8;}   /* zebra */
+.ds-table tbody tr:hover{background:#E6F5EC;}              /* hover */</pre></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · BADGE & CHIP
+         ============================================================ -->
+    <section class="ds-sec" id="c-badge">
+      <div class="ds-sec-head"><h2>Badge &amp; Chip</h2><span class="tag">Feedback</span></div>
+      <p class="ds-sec-desc">Badge = ป้ายสถานะ/หมวด (อ่านอย่างเดียว) · Chip = ป้ายที่ลบได้ (filter/selection) ใช้สี semantic ตามความหมาย</p>
+      <div class="ds-block">
+        <div class="ds-preview">
+          <span class="ds-badge ds-badge--brand">Brand</span>
+          <span class="ds-badge ds-badge--neutral">Neutral</span>
+          <span class="ds-badge ds-badge--success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>สำเร็จ</span>
+          <span class="ds-badge ds-badge--warning">รอดำเนินการ</span>
+          <span class="ds-badge ds-badge--danger">ล้มเหลว</span>
+          <span class="ds-badge ds-badge--dark">Premium</span>
+          <span class="ds-chip">Bangkok <button aria-label="remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></span>
+        </div>
+        <div class="ds-code"><span class="lang">html + css</span><button class="ds-copy">Copy</button><pre>&lt;span class="ds-badge ds-badge--success"&gt;&lt;svg/&gt;สำเร็จ&lt;/span&gt;
+&lt;span class="ds-badge ds-badge--warning"&gt;รอดำเนินการ&lt;/span&gt;
+
+&lt;span class="ds-chip"&gt;Bangkok
+  &lt;button aria-label="remove"&gt;&lt;svg ...x.../&gt;&lt;/button&gt;
+&lt;/span&gt;</pre></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · ALERT / TOAST / TOOLTIP
+         ============================================================ -->
+    <section class="ds-sec" id="c-feedback">
+      <div class="ds-sec-head"><h2>Alert · Toast · Tooltip</h2><span class="tag">Feedback · interactive</span></div>
+      <p class="ds-sec-desc">Alert = ข้อความ inline ติดอยู่กับหน้า · Toast = แจ้งเตือนชั่วคราวลอยขึ้นมา · Tooltip = คำอธิบายเมื่อ hover</p>
+
+      <div class="ds-sub">Alert / Banner</div>
+      <div class="ds-block">
+        <div class="ds-preview col" style="gap:12px">
+          <div class="ds-alert ds-alert--success"><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span><span><b>ยืนยันสิทธิ์สำเร็จ</b>ข้อมูลของคุณผ่านการตรวจสอบแล้ว</span></div>
+          <div class="ds-alert ds-alert--warning"><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></span><span><b>เอกสารรอตรวจสอบ</b>กรุณารอผลภายใน 24 ชม.</span></div>
+          <div class="ds-alert ds-alert--danger"><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span><span><b>การทำรายการล้มเหลว</b>กรุณาลองใหม่อีกครั้ง</span></div>
+          <div class="ds-alert ds-alert--info"><span class="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span><span><b>ข้อมูลเพิ่มเติม</b>โมเดล Rent-to-Own ไม่ต้องผ่านเกณฑ์ธนาคาร</span></div>
+        </div>
+        <div class="ds-code"><span class="lang">html + css</span><button class="ds-copy">Copy</button><pre>&lt;div class="ds-alert ds-alert--success"&gt;
+  &lt;span class="ai"&gt;&lt;svg .../&gt;&lt;/span&gt;
+  &lt;span&gt;&lt;b&gt;ยืนยันสิทธิ์สำเร็จ&lt;/b&gt;ข้อมูลผ่านการตรวจสอบแล้ว&lt;/span&gt;
+&lt;/div&gt;
+&lt;!-- variants: --success --warning --danger --info --&gt;</pre></div>
+      </div>
+
+      <div class="ds-sub">Toast (คลิกเพื่อแสดง) &amp; Tooltip (hover)</div>
+      <div class="ds-block">
+        <div class="ds-preview center" style="gap:24px">
+          <button class="ds-btn-solid" onclick="showToast('บันทึกข้อมูลเรียบร้อย')">แสดง Toast</button>
+          <span class="ds-tip" tabindex="0">
+            <span class="ds-badge ds-badge--neutral" style="cursor:help">hover ฉัน</span>
+            <span class="tip">นี่คือ tooltip อธิบายเพิ่มเติม</span>
+          </span>
+        </div>
+        <div class="ds-code"><span class="lang">html + css + js</span><button class="ds-copy">Copy</button><pre>&lt;!-- Toast (one element, reused) --&gt;
+&lt;div id="dsToast" class="ds-toast"&gt;&lt;span class="ti"&gt;&lt;svg/&gt;&lt;/span&gt;&lt;span id="dsToastMsg"&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;button onclick="showToast('บันทึกข้อมูลเรียบร้อย')"&gt;แสดง Toast&lt;/button&gt;
+
+&lt;!-- Tooltip (pure CSS hover/focus) --&gt;
+&lt;span class="ds-tip" tabindex="0"&gt;trigger
+  &lt;span class="tip"&gt;คำอธิบาย&lt;/span&gt;
+&lt;/span&gt;</pre></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · PROGRESS / SKELETON / SPINNER
+         ============================================================ -->
+    <section class="ds-sec" id="c-progress">
+      <div class="ds-sec-head"><h2>Progress · Skeleton · Spinner</h2><span class="tag">Feedback</span></div>
+      <p class="ds-sec-desc">สถานะการโหลด/ความคืบหน้า — progress bar สำหรับงานที่รู้ %, spinner สำหรับงานสั้น, skeleton สำหรับโครงหน้าระหว่างโหลดข้อมูล</p>
+      <div class="ds-block">
+        <div class="ds-preview col" style="gap:20px">
+          <div style="display:flex;align-items:center;gap:16px;width:100%">
+            <div class="ds-progress"><div class="bar" style="width:65%"></div></div>
+            <span style="font-size:13px;color:#5B6A6B">65%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:24px">
+            <div class="ds-spin" role="status" aria-label="loading"></div>
+            <div style="display:flex;flex-direction:column;gap:8px;width:240px">
+              <div class="ds-skel" style="height:14px;width:70%"></div>
+              <div class="ds-skel" style="height:14px;width:100%"></div>
+              <div class="ds-skel" style="height:14px;width:85%"></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="ds-skel" style="width:48px;height:48px;border-radius:50%"></div>
+              <div style="display:flex;flex-direction:column;gap:6px"><div class="ds-skel" style="width:90px;height:12px"></div><div class="ds-skel" style="width:60px;height:12px"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="ds-code"><span class="lang">html + css</span><button class="ds-copy">Copy</button><pre>&lt;div class="ds-progress"&gt;&lt;div class="bar" style="width:65%"&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class="ds-spin" role="status" aria-label="loading"&gt;&lt;/div&gt;
+&lt;div class="ds-skel" style="height:14px;width:70%"&gt;&lt;/div&gt;  &lt;!-- shimmer --&gt;</pre></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · MODAL / DIALOG
+         ============================================================ -->
+    <section class="ds-sec" id="c-overlay">
+      <div class="ds-sec-head"><h2>Modal / Dialog</h2><span class="tag">Overlay · interactive</span></div>
+      <p class="ds-sec-desc">Overlay กลางจอบนพื้น scrim <code>rgba(10,38,51,.5)</code> + blur · ปิดด้วยปุ่ม, คลิกพื้นหลัง หรือ Esc</p>
+      <div class="ds-block">
+        <div class="ds-preview center">
+          <button class="ds-btn-solid" onclick="openModal('demoModal')">เปิด Modal</button>
+        </div>
+        <div class="ds-code"><span class="lang">html + css + js</span><button class="ds-copy">Copy</button><pre>&lt;div class="ds-modal-overlay" id="demoModal"&gt;
+  &lt;div class="ds-modal" role="dialog" aria-modal="true"&gt;
+    &lt;div class="mh"&gt;&lt;span class="mi"&gt;&lt;svg/&gt;&lt;/span&gt;&lt;div&gt;&lt;h3&gt;ยืนยันการส่งข้อมูล&lt;/h3&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;p&gt;...&lt;/p&gt;
+    &lt;div class="actions"&gt;
+      &lt;button class="ds-btn-ghost" onclick="closeModal('demoModal')"&gt;ยกเลิก&lt;/button&gt;
+      &lt;button class="ds-btn-solid" onclick="closeModal('demoModal')"&gt;ยืนยัน&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- openModal(id) / closeModal(id); click-scrim &amp; Esc close --&gt;</pre></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · TABS
+         ============================================================ -->
+    <section class="ds-sec" id="c-tabs">
+      <div class="ds-sec-head"><h2>Tabs</h2><span class="tag">Navigation · interactive</span></div>
+      <p class="ds-sec-desc">Underline tabs สำหรับสลับเนื้อหาในหน้าเดียว (ต่างจาก pill <code>.role-toggle</code> ที่ใช้สลับบทบาท Buyer/Investor)</p>
+      <div class="ds-block">
+        <div class="ds-preview col">
+          <div class="ds-tabs" role="tablist" data-tabs>
+            <button class="ds-tab is-active" role="tab" data-tab="t1">ภาพรวม</button>
+            <button class="ds-tab" role="tab" data-tab="t2">เงื่อนไข</button>
+            <button class="ds-tab" role="tab" data-tab="t3">คำถามที่พบบ่อย</button>
+          </div>
+          <div class="ds-tabpanel" data-panel="t1">โมเดล Rent-to-Own เปิดโอกาสให้เช่าก่อนแล้วสะสมเป็นเงินซื้อ ไม่ต้องผ่านเกณฑ์ธนาคาร</div>
+          <div class="ds-tabpanel" data-panel="t2" hidden>เงื่อนไขและสิทธิ์การซื้อเป็นไปตามที่ระบุในสัญญา ควรศึกษารายละเอียดก่อนตัดสินใจ</div>
+          <div class="ds-tabpanel" data-panel="t3" hidden>Q: ต้องวางเงินดาวน์ไหม? A: ไม่ต้องวางเงินก้อนใหญ่ เข้าอยู่ได้ทันที</div>
+        </div>
+        <div class="ds-code"><span class="lang">html + css + js</span><button class="ds-copy">Copy</button><pre>&lt;div class="ds-tabs" data-tabs&gt;
+  &lt;button class="ds-tab is-active" data-tab="t1"&gt;ภาพรวม&lt;/button&gt;
+  &lt;button class="ds-tab" data-tab="t2"&gt;เงื่อนไข&lt;/button&gt;
+&lt;/div&gt;
+&lt;div class="ds-tabpanel" data-panel="t1"&gt;...&lt;/div&gt;
+&lt;div class="ds-tabpanel" data-panel="t2" hidden&gt;...&lt;/div&gt;</pre></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · PAGINATION & BREADCRUMB
+         ============================================================ -->
+    <section class="ds-sec" id="c-pagination">
+      <div class="ds-sec-head"><h2>Pagination &amp; Breadcrumb</h2><span class="tag">Navigation · interactive</span></div>
+      <p class="ds-sec-desc">Pagination สำหรับรายการหลายหน้า · Breadcrumb แสดงตำแหน่งในลำดับชั้น</p>
+      <div class="ds-block">
+        <div class="ds-preview col" style="gap:20px">
+          <nav class="ds-crumb" aria-label="breadcrumb">
+            <a href="#">หน้าแรก</a><span class="sep">/</span>
+            <a href="#">ระบบเช่าเพื่อซื้อ</a><span class="sep">/</span>
+            <span class="current">Own Matching</span>
+          </nav>
+          <div class="ds-pager" data-pager>
+            <button aria-label="prev" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <button class="is-active">1</button><button>2</button><button>3</button>
+            <span style="color:#9aa6a0;padding:0 4px">…</span><button>8</button>
+            <button aria-label="next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+          </div>
+        </div>
+        <div class="ds-code"><span class="lang">html + css + js</span><button class="ds-copy">Copy</button><pre>&lt;nav class="ds-crumb"&gt;
+  &lt;a&gt;หน้าแรก&lt;/a&gt;&lt;span class="sep"&gt;/&lt;/span&gt;
+  &lt;span class="current"&gt;Own Matching&lt;/span&gt;
+&lt;/nav&gt;
+
+&lt;div class="ds-pager" data-pager&gt;
+  &lt;button class="is-active"&gt;1&lt;/button&gt;&lt;button&gt;2&lt;/button&gt;...
+&lt;/div&gt;</pre></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · AVATAR
+         ============================================================ -->
+    <section class="ds-sec" id="c-avatar">
+      <div class="ds-sec-head"><h2>Avatar</h2><span class="tag">Component</span></div>
+      <p class="ds-sec-desc">รูปโปรไฟล์/ตัวย่อ — มี 3 ขนาด (sm/base/lg) และแบบ group ซ้อนกัน · fallback เป็นตัวอักษรบน gradient แบรนด์</p>
+      <div class="ds-block">
+        <div class="ds-preview center" style="gap:24px">
+          <span class="ds-avatar ds-avatar--sm">ส</span>
+          <span class="ds-avatar">OW</span>
+          <span class="ds-avatar ds-avatar--lg">ND</span>
+          <span class="ds-avatar"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAAANhJREFUeAHtlOERgyAMhWMncIMyght0hW7QbqCb6CYdwRE6QkdwBPpoiaUccETRX353744LISGJSHSwFq11DQ1Qb9ZUEgRU0Ev/MGtFJUCgDpqcwJzI2DpaitMSpre22q5nO0nxWmJu2lK4shG6iGYSaImikvgtyfAf7IWmrHZxdMrAm1HeTIQJuJXK6jOzkO+J9kJYQb9pi5wk2wxZgmgG+vuar9BD//+jntZ2Sx1OVoCtxgsaw/g0SxJw8BFqobOX/O74zJ9s5SYIBa5Aaj8Gn9vvHRzEeAMdfr5KyizHIAAAAABJRU5ErkJggg==" alt="" style="filter:none;background:#fff"></span>
+          <span class="ds-avatar-group">
+            <span class="ds-avatar ds-avatar--sm">A</span><span class="ds-avatar ds-avatar--sm">B</span><span class="ds-avatar ds-avatar--sm">C</span>
+            <span class="ds-avatar ds-avatar--sm" style="background:#eef2ef;color:#5B6A6B">+5</span>
+          </span>
+        </div>
+        <div class="ds-code"><span class="lang">html + css</span><button class="ds-copy">Copy</button><pre>&lt;span class="ds-avatar"&gt;OW&lt;/span&gt;              &lt;!-- initials --&gt;
+&lt;span class="ds-avatar"&gt;&lt;img src="..."&gt;&lt;/span&gt;   &lt;!-- photo --&gt;
+&lt;span class="ds-avatar-group"&gt;...&lt;/span&gt;        &lt;!-- stacked --&gt;
+&lt;!-- sizes: .ds-avatar--sm / .ds-avatar--lg --&gt;</pre></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · NAVIGATION
+         ============================================================ -->
+    <section class="ds-sec" id="c-nav">
+      <div class="ds-sec-head"><h2>Navigation</h2><span class="tag">Component</span></div>
+      <p class="ds-sec-desc">Desktop = nav links โปร่งบนพื้น hero. Mobile = hamburger เปิด <b>liquid-glass dropdown panel</b> (blur 28px) พร้อม submenu, active pill <code>#5DC744</code> และ language switch</p>
+
+      <div class="ds-sub">Desktop nav bar</div>
+      <div class="ds-block">
+        <div class="ds-preview dark" data-responsive>
+          <div class="vp-wrap" style="display:flex;align-items:center;justify-content:space-between;width:100%;gap:24px;color:#fff">
+            <b style="font-size:18px;letter-spacing:.04em">OWND</b>
+            <div style="display:flex;gap:28px;font-size:14.5px">
+              <a href="#" style="color:#fff;text-decoration:none;font-weight:500">หน้าแรก</a>
+              <a href="#" style="color:rgba(255,255,255,.78);text-decoration:none">เกี่ยวกับเรา</a>
+              <a href="#" style="color:rgba(255,255,255,.78);text-decoration:none">ระบบเช่าเพื่อซื้อ</a>
+              <a href="#" style="color:rgba(255,255,255,.78);text-decoration:none">ติดต่อ</a>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center">
+              <a class="btn-register">ลงทะเบียน</a>
+              <button class="menu-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ds-sub">Mobile menu — liquid glass panel</div>
+      <div class="ds-block">
+        <div class="ds-preview dark center">
+          <div class="menu-panel">
+            <a class="menu-item"><span class="mi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1Z"/></svg></span><span class="mi-lab">หน้าแรก</span></a>
+            <a class="menu-item is-active"><span class="mi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span><span class="mi-lab">ระบบเช่าเพื่อซื้อ</span></a>
+            <a class="menu-item"><span class="mi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><span class="mi-lab">ติดต่อ</span></a>
+          </div>
+        </div>
+        <div class="ds-code"><span class="lang">html + css (Matching Hero)</span><button class="ds-copy">Copy</button><pre>&lt;div class="menu-panel"&gt;
+  &lt;a class="menu-item"&gt;&lt;span class="mi-ico"&gt;&lt;svg/&gt;&lt;/span&gt;
+     &lt;span class="mi-lab"&gt;หน้าแรก&lt;/span&gt;&lt;/a&gt;
+  &lt;a class="menu-item is-active"&gt;...active pill #5DC744...&lt;/a&gt;
+&lt;/div&gt;
+
+.menu-panel{background:rgba(15,38,48,.20);backdrop-filter:blur(28px) saturate(1.4);
+  border-radius:16px;border:1px solid rgba(255,255,255,.14);}
+.menu-item.is-active{background:#5DC744;border-radius:12px;color:#fff;}</pre></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · FOOTER
+         ============================================================ -->
+    <section class="ds-sec" id="c-footer">
+      <div class="ds-sec-head"><h2>Footer</h2><span class="tag">Component</span></div>
+      <p class="ds-sec-desc">Footer เต็มรูปบนพื้น <code>#083538</code>: brand + badge, link columns (3), contact (icon circles), และ bottom bar (copyright + legal links). Grid 5 คอลัมน์ → 2 → 1 ตาม breakpoint</p>
+      <div class="ds-block">
+        <div class="ds-preview col" style="padding:18px;background:#0d2b30">
+          <footer class="ownd-footer">
+            <div class="fgrid">
+              <div>
+                <b style="font-size:20px">OWND</b>
+                <p class="fdesc">แพลตฟอร์ม Prop-Tech เช่าเพื่อซื้อ สำหรับตลาดไทย — เชื่อมนักลงทุนกับคนอยากมีบ้าน</p>
+                <span class="fbadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Platform Prop-Tech</span>
+              </div>
+              <div><h5 class="ftitle">เกี่ยวกับ</h5><ul><li><a href="#">หน้าแรก</a></li><li><a href="#">เกี่ยวกับเรา</a></li><li><a href="#">พาร์ทเนอร์</a></li></ul></div>
+              <div><h5 class="ftitle">ระบบเช่าเพื่อซื้อ</h5><ul><li><a href="#">Own Matching</a></li><li><a href="#">Own Sub</a></li><li><a href="#">Own Unlock</a></li></ul></div>
+              <div><h5 class="ftitle">ข่าวสาร</h5><ul><li><a href="#">ข่าวสาร</a></li><li><a href="#">บทความ</a></li></ul></div>
+              <div><h5 class="ftitle">ติดต่อ</h5>
+                <div class="fcontact">
+                  <a href="#"><span class="icirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>02-124-4555</a>
+                  <a href="#"><span class="icirc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span>Hello@ownd.co</a>
+                </div>
+              </div>
+            </div>
+            <div class="fbottom">
+              <div class="fcopy">© 2026 บริษัท โอนดี จำกัด · All rights reserved</div>
+              <div class="flegal"><a href="#">นโยบายความเป็นส่วนตัว</a><a href="#">ข้อกำหนดการใช้งาน</a><a href="#">คุกกี้</a></div>
+            </div>
+          </footer>
+        </div>
+        <div class="ds-code"><span class="lang">html + css (Matching Hero)</span><button class="ds-copy">Copy</button><pre>&lt;footer class="ownd-footer"&gt;
+  &lt;div class="fgrid"&gt;
+    &lt;div&gt;&lt;b&gt;OWND&lt;/b&gt;&lt;p class="fdesc"&gt;...&lt;/p&gt;&lt;span class="fbadge"&gt;...&lt;/span&gt;&lt;/div&gt;
+    &lt;div&gt;&lt;h5 class="ftitle"&gt;เกี่ยวกับ&lt;/h5&gt;&lt;ul&gt;&lt;li&gt;&lt;a&gt;...&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+    ... 3 link columns + contact column ...
+  &lt;/div&gt;
+  &lt;div class="fbottom"&gt;&lt;div class="fcopy"&gt;© 2026...&lt;/div&gt;&lt;div class="flegal"&gt;...&lt;/div&gt;&lt;/div&gt;
+&lt;/footer&gt;</pre></div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         COMPONENT · ICONS
+         ============================================================ -->
+    <section class="ds-sec" id="c-icons">
+      <div class="ds-sec-head"><h2>Icons</h2><span class="tag">Component</span></div>
+      <p class="ds-sec-desc">ไอคอนทั้งหมดเป็น <b>inline SVG สไตล์ Lucide</b> — viewBox 24×24, <code>stroke=currentColor</code>, <code>stroke-width=2</code>, round cap/join เปลี่ยนสีด้วย <code>color</code>/<code>stroke</code> ของ parent (จึง tint ตาม context ได้)</p>
+      <div class="icon-grid">
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1Z"/></svg><div class="nm">home</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l6-4 6 4v12"/><path d="M15 21V11l6-3v13"/><line x1="3" y1="21" x2="21" y2="21"/></svg><div class="nm">building</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11l4 4 8-8"/><path d="M14 7h7v7"/></svg><div class="nm">trending-up</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg><div class="nm">phone</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg><div class="nm">mail</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><div class="nm">message</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg><div class="nm">map-pin</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><div class="nm">check</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg><div class="nm">arrow-right</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg><div class="nm">x-circle</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><div class="nm">shield</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><div class="nm">clock</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><div class="nm">calendar</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 7 18.2l1.9-5.8L4 8.8h6.1z"/></svg><div class="nm">sparkles</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg><div class="nm">card</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><div class="nm">alert-tri</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V4l8 4 8-4v12l-8 4-8-4Z"/></svg><div class="nm">flag</div></div>
+        <div class="icon-cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg><div class="nm">chevron-r</div></div>
+      </div>
+      <div class="ds-code" style="margin-top:14px;border-radius:12px;border:none"><span class="lang">svg usage</span><button class="ds-copy">Copy</button><pre>&lt;svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"&gt;
+  &lt;path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1Z"/&gt;
+&lt;/svg&gt;
+&lt;!-- tint via parent: style="color:#00704C" or stroke="#79F233" --&gt;</pre></div>
+    </section>
+
+    <!-- ============================================================
+         RESOURCE · ACCESSIBILITY
+         ============================================================ -->
+    <section class="ds-sec" id="a11y">
+      <div class="ds-sec-head"><h2>Accessibility</h2><span class="tag">Resource · WCAG 2.1 AA</span></div>
+      <p class="ds-sec-desc">เป้าหมาย <b>WCAG 2.1 AA</b> — ตัวหนังสือ contrast ≥ 4.5:1 (ปกติ) / 3:1 (ตัวใหญ่). ค่าด้านล่างมาจากการวัด pixel จริง (อ้างอิงงาน UI audit เดิม) <b>กฎสำคัญ:</b> lime <code>#79F233</code> และ <code>#3DB140</code> ใช้เป็นตัวหนังสือ/CTA ได้เฉพาะบนพื้นเข้มเท่านั้น — บนพื้นขาวไม่ผ่าน</p>
+
+      <div class="ds-sub">Contrast reference</div>
+      <table class="ds-table">
+        <thead><tr><th>คู่สี</th><th>Foreground</th><th>Background</th><th>Ratio</th><th>AA</th></tr></thead>
+        <tbody>
+          <tr><td>Heading on white</td><td><code>#0A2633</code></td><td>white</td><td class="a11y-pass">15.7:1</td><td><span class="ds-badge ds-badge--success">Pass</span></td></tr>
+          <tr><td>CTA on white</td><td><code>#00704C</code></td><td>white</td><td class="a11y-pass">6.1:1</td><td><span class="ds-badge ds-badge--success">Pass</span></td></tr>
+          <tr><td>Secondary text</td><td><code>#5B6A6B</code></td><td>white</td><td class="a11y-pass">5.0:1</td><td><span class="ds-badge ds-badge--success">Pass</span></td></tr>
+          <tr><td>Tab active</td><td><code>#026348</code></td><td>white</td><td class="a11y-pass">7.3:1</td><td><span class="ds-badge ds-badge--success">Pass</span></td></tr>
+          <tr><td>White on dark</td><td>white</td><td><code>#083538</code></td><td class="a11y-pass">13.3:1</td><td><span class="ds-badge ds-badge--success">Pass</span></td></tr>
+          <tr><td>CTA lime on dark</td><td><code>#79F233</code></td><td><code>#0A2633</code></td><td class="a11y-pass">12.5:1</td><td><span class="ds-badge ds-badge--success">Pass</span></td></tr>
+          <tr style="background:#FFF5F5"><td>lime on white ⚠️</td><td><code>#3DB140</code></td><td>white</td><td class="a11y-fail">2.8:1</td><td><span class="ds-badge ds-badge--danger">Fail</span></td></tr>
+          <tr><td>Danger text</td><td><code>#B91C1C</code></td><td>white</td><td class="a11y-pass">6.4:1</td><td><span class="ds-badge ds-badge--success">Pass</span></td></tr>
+          <tr><td>Warning text</td><td><code>#B45309</code></td><td>white</td><td class="a11y-pass">4.9:1</td><td><span class="ds-badge ds-badge--success">Pass</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="ds-sub">Patterns ที่ใช้ในระบบ</div>
+      <table class="ds-table">
+        <thead><tr><th>หัวข้อ</th><th>การปฏิบัติ</th></tr></thead>
+        <tbody>
+          <tr><td>Focus visible</td><td>keyboard focus ทุก control แสดง ring <code>2px #00704C</code> (ลอง Tab ดูได้) — ไม่ลบ outline ทิ้ง</td></tr>
+          <tr><td>Keyboard</td><td>Dropdown/Modal ปิดด้วย <code>Esc</code> · Modal คลิก scrim ปิด · ปุ่ม icon-only ทุกตัวมี <code>aria-label</code></td></tr>
+          <tr><td>ARIA roles</td><td>Modal <code>role="dialog" aria-modal</code> · Tabs <code>role="tablist/tab"</code> · Toggle <code>aria-selected</code></td></tr>
+          <tr><td>Touch target</td><td>ปุ่ม/ลิงก์บน mobile ขั้นต่ำ <code>44×44px</code> (จาก source)</td></tr>
+          <tr><td>Reduced motion</td><td>เคารพ <code>prefers-reduced-motion</code> — ปิด animation เมื่อผู้ใช้ตั้งค่าไว้</td></tr>
+          <tr><td>Color ≠ ความหมายเดียว</td><td>สถานะใช้ icon + ข้อความคู่กับสีเสมอ (ไม่พึ่งสีอย่างเดียว)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============================================================
+         RESOURCE · DESIGN TOKENS EXPORT
+         ============================================================ -->
+    <section class="ds-sec" id="tokens-export">
+      <div class="ds-sec-head"><h2>Design Tokens (export)</h2><span class="tag">Resource · for Dev</span></div>
+      <p class="ds-sec-desc">Single source of truth — token ทั้งหมดถูก export เป็น 3 รูปแบบให้ dev เลือก import ตาม stack วางไว้ที่โฟลเดอร์ <code>ownd-ds-assets/</code> ข้างไฟล์นี้</p>
+
+      <div class="ds-preview col" style="background:#fff;border:1px solid #e6ece8;border-radius:14px;gap:12px">
+        <a class="ds-badge ds-badge--brand" download href="data:text/css;base64,LyogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiAgIE9XTkQgRGVzaWduIFN5c3RlbSDigJQgRGVzaWduIFRva2VucyAoQ1NTIGN1c3RvbSBwcm9wZXJ0aWVzKQogICBTaW5nbGUgc291cmNlIG9mIHRydXRoLiBJbXBvcnQgb25jZSBhdCBhcHAgcm9vdDoKICAgICBAaW1wb3J0ICJvd25kLXRva2Vucy5jc3MiOwogICBWYWx1ZXMgZXh0cmFjdGVkIGZyb20gT1dORCBMYW5kaW5nIHY2ICsgTWF0Y2hpbmcgSGVyby4KICAgPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09ICovCjpyb290IHsKICAvKiAtLS0tLS0tLS0tIENvbG9yIMK3IEJyYW5kIC0tLS0tLS0tLS0gKi8KICAtLW93bmQtZ3JlZW4tMTAwOiAjNzlGMjMzOyAgLyogbGltZSDCtyBDVEEvYWNjZW50IG9uIGRhcmsgKi8KICAtLW93bmQtZ3JlZW4tMzAwOiAjM0RCMTQwOwogIC0tb3duZC1ncmVlbi01MDA6ICMwMDcwNEM7ICAvKiBicmFuZCDCtyBwcmltYXJ5IENUQSBvbiBsaWdodCwgbGluayAqLwogIC0tb3duZC1ncmVlbi02MDA6ICMwMjYzNDg7ICAvKiB0b2dnbGUgYmcsIHRhYiBhY3RpdmUgKi8KICAtLW93bmQtZ3JlZW4tNzAwOiAjMDA0RDMzOyAgLyogaG92ZXIgKi8KICAtLW93bmQtZ3JlZW4tOTAwOiAjMEEyNjMzOyAgLyogaW5rIC8gaGVhZGluZyAqLwogIC0tb3duZC1ncmVlbi0xMDAwOiMwNjFBMjI7ICAvKiBkYXJrZXN0ICovCgogIC8qIC0tLS0tLS0tLS0gQ29sb3IgwrcgU3VyZmFjZSAtLS0tLS0tLS0tICovCiAgLS1vd25kLXN1cmZhY2UtZGFyazogICAjMDgzNTM4OyAvKiBkYXJrIHNlY3Rpb24sIGZvb3RlciwgbmF2ICovCiAgLS1vd25kLXN1cmZhY2UtbGlnaHQ6ICAjRjhGOUY2OwogIC0tb3duZC1zdXJmYWNlLWxpZ2h0MjogI0Y0RjdGNTsKICAtLW93bmQtd2hpdGU6ICAgICAgICAgICNGRkZGRkY7CiAgLS1vd25kLXRpbnQ6ICAgICAgICAgICAjRTZGNUVDOyAvKiBiYWRnZSAvIHNlbGVjdGVkIGJnICovCgogIC8qIC0tLS0tLS0tLS0gQ29sb3IgwrcgVGV4dCAtLS0tLS0tLS0tICovCiAgLS1vd25kLXRleHQtcHJpbWFyeTogICAjMEEyNjMzOwogIC0tb3duZC10ZXh0LXNlY29uZGFyeTogIzVCNkE2QjsKICAtLW93bmQtdGV4dC1tdXRlZDogICAgICM5QUE2QTA7CiAgLS1vd25kLXRleHQtb24tZGFyazogICByZ2JhKDI1NSwyNTUsMjU1LDAuODYpOwoKICAvKiAtLS0tLS0tLS0tIENvbG9yIMK3IFNlbWFudGljIC0tLS0tLS0tLS0gKi8KICAtLW93bmQtZGFuZ2VyOiAgICNFRjQ0NDQ7ICAtLW93bmQtZGFuZ2VyLTcwMDogICNCOTFDMUM7ICAtLW93bmQtZGFuZ2VyLXRpbnQ6ICAjRkZGNUY1OwogIC0tb3duZC1zdWNjZXNzOiAgIzE0QjhBNjsgIC0tb3duZC1zdWNjZXNzLTcwMDogIzBGNzY2RTsgIC0tb3duZC1zdWNjZXNzLXRpbnQ6ICNGMEZERkE7CiAgLS1vd25kLXdhcm5pbmc6ICAjRjU5RTBCOyAgLS1vd25kLXdhcm5pbmctNzAwOiAjQjQ1MzA5OyAgLS1vd25kLXdhcm5pbmctdGludDogI0ZGRkJFQjsKICAtLW93bmQtaW5mbzogICAgICMyNTYzRUI7ICAtLW93bmQtaW5mby10aW50OiAgICNFRkY2RkY7CgogIC8qIC0tLS0tLS0tLS0gQ29sb3IgwrcgQm9yZGVyIC0tLS0tLS0tLS0gKi8KICAtLW93bmQtYm9yZGVyOiAgICAgICAgI0U1RTdFQjsKICAtLW93bmQtYm9yZGVyLXN1YnRsZTogI0VFRjJFRjsKICAtLW93bmQtYm9yZGVyLWRhcms6ICAgcmdiYSgyNTUsMjU1LDI1NSwwLjE0KTsKCiAgLyogLS0tLS0tLS0tLSBUeXBvZ3JhcGh5IC0tLS0tLS0tLS0gKi8KICAtLW93bmQtZm9udC1zYW5zOiAnS2FuaXQnLCBzeXN0ZW0tdWksIHNhbnMtc2VyaWY7CiAgLS1vd25kLWZ3LWxpZ2h0OiAzMDA7IC0tb3duZC1mdy1yZWd1bGFyOiA0MDA7IC0tb3duZC1mdy1tZWRpdW06IDUwMDsKICAtLW93bmQtZnctc2VtaWJvbGQ6IDYwMDsgLS1vd25kLWZ3LWJvbGQ6IDcwMDsgLS1vd25kLWZ3LWV4dHJhYm9sZDogODAwOwoKICAtLW93bmQtZnMtaDE6IGNsYW1wKDM0cHgsIDV2dywgNjRweCk7CiAgLS1vd25kLWZzLWgyOiBjbGFtcCgyOHB4LCA0dncsIDU2cHgpOwogIC0tb3duZC1mcy1oMzogY2xhbXAoMThweCwgMS40dncsIDIycHgpOwogIC0tb3duZC1mcy1sZWRlOiBjbGFtcCgxNXB4LCAxLjE1dncsIDE3LjVweCk7CiAgLS1vd25kLWZzLWJvZHk6IDE1cHg7CiAgLS1vd25kLWZzLXNtOiAxNHB4OwogIC0tb3duZC1mcy1jYXB0aW9uOiAxMnB4OwogIC0tb3duZC1mcy1leWVicm93OiAxM3B4OwogIC0tb3duZC1saC10aWdodDogMS4xODsgLS1vd25kLWxoLWhlYWRpbmc6IDEuMjU7IC0tb3duZC1saC1ib2R5OiAxLjY1OyAtLW93bmQtbGgtcmVsYXhlZDogMS43OwogIC0tb3duZC1scy1leWVicm93OiAwLjNlbTsgLS1vd25kLWxzLXRpZ2h0OiAtMC4wMWVtOwoKICAvKiAtLS0tLS0tLS0tIFNwYWNpbmcgKDRweCBiYXNlKSAtLS0tLS0tLS0tICovCiAgLS1vd25kLXNwYWNlLTE6IDRweDsgIC0tb3duZC1zcGFjZS0yOiA4cHg7ICAtLW93bmQtc3BhY2UtMzogMTJweDsKICAtLW93bmQtc3BhY2UtNDogMTZweDsgLS1vd25kLXNwYWNlLTY6IDI0cHg7IC0tb3duZC1zcGFjZS04OiAzMnB4OwogIC0tb3duZC1zcGFjZS0xMjogNDhweDsgLS1vd25kLXNwYWNlLTE2OiA2NHB4OyAtLW93bmQtc3BhY2UtMjQ6IDk2cHg7IC0tb3duZC1zcGFjZS0zMjogMTI4cHg7CiAgLS1vd25kLXNwYWNlLXNlY3Rpb246IGNsYW1wKDQ4cHgsIDZ2dywgOTZweCk7CiAgLS1vd25kLXNwYWNlLWd1dHRlcjogIGNsYW1wKDIwcHgsIDR2dywgNTZweCk7CgogIC8qIC0tLS0tLS0tLS0gUmFkaXVzIC0tLS0tLS0tLS0gKi8KICAtLW93bmQtcmFkaXVzLXNtOiAxMnB4OwogIC0tb3duZC1yYWRpdXMtbWQ6IDE2cHg7CiAgLS1vd25kLXJhZGl1cy1sZzogMThweDsKICAtLW93bmQtcmFkaXVzLXhsOiAyNHB4OwogIC0tb3duZC1yYWRpdXMtcGlsbDogNTBweDsKICAtLW93bmQtcmFkaXVzLWZ1bGw6IDk5OXB4OwoKICAvKiAtLS0tLS0tLS0tIFNoYWRvdyAtLS0tLS0tLS0tICovCiAgLS1vd25kLXNoYWRvdy1jYXJkOiAgICAwIDEycHggMzJweCByZ2JhKDEwLDM4LDUxLDAuMDgpLCAwIDJweCA2cHggcmdiYSgxMCwzOCw1MSwwLjA0KTsKICAtLW93bmQtc2hhZG93LWNhcmQtbGc6IDAgMThweCA0OHB4IHJnYmEoMTAsMzgsNTEsMC4xMCk7CiAgLS1vd25kLXNoYWRvdy1nbG93OiAgICAwIDhweCAxOHB4IHJnYmEoNjEsMTc3LDY0LDAuMzApOwogIC0tb3duZC1zaGFkb3ctcmluZzogICAgMCAwIDAgMnB4IHJnYmEoMCwxMTIsNzYsMC4xNSk7CgogIC8qIC0tLS0tLS0tLS0gTW90aW9uIC0tLS0tLS0tLS0gKi8KICAtLW93bmQtZHVyLWZhc3Q6IDE1MG1zOwogIC0tb3duZC1kdXItYmFzZTogMjAwbXM7CiAgLS1vd25kLWR1ci1zbG93OiAyODBtczsKICAtLW93bmQtZHVyLXNsb3dlcjogNjAwbXM7CiAgLS1vd25kLWVhc2Utc3RhbmRhcmQ6IGN1YmljLWJlemllciguMiwuNywuMiwxKTsKICAtLW93bmQtZWFzZS1lbnRyYW5jZTogY3ViaWMtYmV6aWVyKC4yLC42NSwuMiwxKTsKICAtLW93bmQtZWFzZS1lbXBoYXNpemVkOiBjdWJpYy1iZXppZXIoLjE2LDEsLjMsMSk7CgogIC8qIC0tLS0tLS0tLS0gWi1pbmRleCAtLS0tLS0tLS0tICovCiAgLS1vd25kLXotc3RpY2t5OiAzMDsKICAtLW93bmQtei1kcm9wZG93bjogNTA7CiAgLS1vd25kLXotb3ZlcmxheTogOTk7CiAgLS1vd25kLXotbW9kYWw6IDEwMDsKICAtLW93bmQtei10b2FzdDogMTEwOwoKICAvKiAtLS0tLS0tLS0tIEJyZWFrcG9pbnRzIChyZWZlcmVuY2U7IHVzZSBpbiBAbWVkaWEpIC0tLS0tLS0tLS0gKi8KICAtLW93bmQtYnAtc206IDQ4MHB4OwogIC0tb3duZC1icC1tZDogNzY4cHg7CiAgLS1vd25kLWJwLWxnOiAxMDI0cHg7CiAgLS1vd25kLWJwLXhsOiAxMjgwcHg7Cn0K" style="text-decoration:none;font-size:14px;padding:10px 16px">⬇ ownd-tokens.css — CSS custom properties</a>
+        <a class="ds-badge ds-badge--brand" download href="data:application/json;base64,ewogICIkc2NoZW1hIjogImh0dHBzOi8vZGVzaWduLXRva2Vucy5vcmcvZm9ybWF0IiwKICAibWV0YSI6IHsgIm5hbWUiOiAiT1dORCBEZXNpZ24gVG9rZW5zIiwgInZlcnNpb24iOiAiMS4wLjAiLCAic291cmNlIjogWyJPV05EIExhbmRpbmcgdjYiLCAiT1dORCBNYXRjaGluZyBIZXJvIl0gfSwKICAiY29sb3IiOiB7CiAgICAiYnJhbmQiOiB7CiAgICAgICJsaW1lIjogeyAidmFsdWUiOiAiIzc5RjIzMyIsICJjb21tZW50IjogIkNUQS9hY2NlbnQgb24gZGFyayIgfSwKICAgICAgIjMwMCI6ICB7ICJ2YWx1ZSI6ICIjM0RCMTQwIiB9LAogICAgICAiNTAwIjogIHsgInZhbHVlIjogIiMwMDcwNEMiLCAiY29tbWVudCI6ICJwcmltYXJ5IENUQSBvbiBsaWdodCwgbGluayIgfSwKICAgICAgIjYwMCI6ICB7ICJ2YWx1ZSI6ICIjMDI2MzQ4IiwgImNvbW1lbnQiOiAidG9nZ2xlLCB0YWIgYWN0aXZlIiB9LAogICAgICAiNzAwIjogIHsgInZhbHVlIjogIiMwMDREMzMiLCAiY29tbWVudCI6ICJob3ZlciIgfSwKICAgICAgIjkwMCI6ICB7ICJ2YWx1ZSI6ICIjMEEyNjMzIiwgImNvbW1lbnQiOiAiaW5rIC8gaGVhZGluZyIgfSwKICAgICAgIjEwMDAiOiB7ICJ2YWx1ZSI6ICIjMDYxQTIyIiB9CiAgICB9LAogICAgInN1cmZhY2UiOiB7CiAgICAgICJkYXJrIjogICB7ICJ2YWx1ZSI6ICIjMDgzNTM4IiB9LAogICAgICAibGlnaHQiOiAgeyAidmFsdWUiOiAiI0Y4RjlGNiIgfSwKICAgICAgImxpZ2h0MiI6IHsgInZhbHVlIjogIiNGNEY3RjUiIH0sCiAgICAgICJ3aGl0ZSI6ICB7ICJ2YWx1ZSI6ICIjRkZGRkZGIiB9LAogICAgICAidGludCI6ICAgeyAidmFsdWUiOiAiI0U2RjVFQyIgfQogICAgfSwKICAgICJ0ZXh0IjogewogICAgICAicHJpbWFyeSI6ICAgeyAidmFsdWUiOiAiIzBBMjYzMyIgfSwKICAgICAgInNlY29uZGFyeSI6IHsgInZhbHVlIjogIiM1QjZBNkIiIH0sCiAgICAgICJtdXRlZCI6ICAgICB7ICJ2YWx1ZSI6ICIjOUFBNkEwIiB9CiAgICB9LAogICAgInNlbWFudGljIjogewogICAgICAiZGFuZ2VyIjogIHsgInZhbHVlIjogIiNFRjQ0NDQiLCAiNzAwIjogIiNCOTFDMUMiLCAidGludCI6ICIjRkZGNUY1IiB9LAogICAgICAic3VjY2VzcyI6IHsgInZhbHVlIjogIiMxNEI4QTYiLCAiNzAwIjogIiMwRjc2NkUiLCAidGludCI6ICIjRjBGREZBIiB9LAogICAgICAid2FybmluZyI6IHsgInZhbHVlIjogIiNGNTlFMEIiLCAiNzAwIjogIiNCNDUzMDkiLCAidGludCI6ICIjRkZGQkVCIiB9LAogICAgICAiaW5mbyI6ICAgIHsgInZhbHVlIjogIiMyNTYzRUIiLCAidGludCI6ICIjRUZGNkZGIiB9CiAgICB9LAogICAgImJvcmRlciI6IHsKICAgICAgImRlZmF1bHQiOiB7ICJ2YWx1ZSI6ICIjRTVFN0VCIiB9LAogICAgICAic3VidGxlIjogIHsgInZhbHVlIjogIiNFRUYyRUYiIH0KICAgIH0KICB9LAogICJmb250IjogewogICAgImZhbWlseSI6IHsgInNhbnMiOiB7ICJ2YWx1ZSI6ICJLYW5pdCwgc3lzdGVtLXVpLCBzYW5zLXNlcmlmIiB9IH0sCiAgICAid2VpZ2h0IjogeyAibGlnaHQiOiAzMDAsICJyZWd1bGFyIjogNDAwLCAibWVkaXVtIjogNTAwLCAic2VtaWJvbGQiOiA2MDAsICJib2xkIjogNzAwLCAiZXh0cmFib2xkIjogODAwIH0sCiAgICAic2l6ZSI6IHsKICAgICAgImgxIjogICAgICB7ICJ2YWx1ZSI6ICJjbGFtcCgzNHB4LCA1dncsIDY0cHgpIiB9LAogICAgICAiaDIiOiAgICAgIHsgInZhbHVlIjogImNsYW1wKDI4cHgsIDR2dywgNTZweCkiIH0sCiAgICAgICJoMyI6ICAgICAgeyAidmFsdWUiOiAiY2xhbXAoMThweCwgMS40dncsIDIycHgpIiB9LAogICAgICAibGVkZSI6ICAgIHsgInZhbHVlIjogImNsYW1wKDE1cHgsIDEuMTV2dywgMTcuNXB4KSIgfSwKICAgICAgImJvZHkiOiAgICB7ICJ2YWx1ZSI6ICIxNXB4IiB9LAogICAgICAic20iOiAgICAgIHsgInZhbHVlIjogIjE0cHgiIH0sCiAgICAgICJjYXB0aW9uIjogeyAidmFsdWUiOiAiMTJweCIgfSwKICAgICAgImV5ZWJyb3ciOiB7ICJ2YWx1ZSI6ICIxM3B4IiB9CiAgICB9LAogICAgImxpbmVIZWlnaHQiOiB7ICJ0aWdodCI6IDEuMTgsICJoZWFkaW5nIjogMS4yNSwgImJvZHkiOiAxLjY1LCAicmVsYXhlZCI6IDEuNyB9CiAgfSwKICAic3BhY2UiOiB7CiAgICAiMSI6ICI0cHgiLCAiMiI6ICI4cHgiLCAiMyI6ICIxMnB4IiwgIjQiOiAiMTZweCIsICI2IjogIjI0cHgiLAogICAgIjgiOiAiMzJweCIsICIxMiI6ICI0OHB4IiwgIjE2IjogIjY0cHgiLCAiMjQiOiAiOTZweCIsICIzMiI6ICIxMjhweCIsCiAgICAic2VjdGlvbiI6ICJjbGFtcCg0OHB4LCA2dncsIDk2cHgpIiwgImd1dHRlciI6ICJjbGFtcCgyMHB4LCA0dncsIDU2cHgpIgogIH0sCiAgInJhZGl1cyI6IHsgInNtIjogIjEycHgiLCAibWQiOiAiMTZweCIsICJsZyI6ICIxOHB4IiwgInhsIjogIjI0cHgiLCAicGlsbCI6ICI1MHB4IiwgImZ1bGwiOiAiOTk5cHgiIH0sCiAgInNoYWRvdyI6IHsKICAgICJjYXJkIjogICB7ICJ2YWx1ZSI6ICIwIDEycHggMzJweCByZ2JhKDEwLDM4LDUxLDAuMDgpLCAwIDJweCA2cHggcmdiYSgxMCwzOCw1MSwwLjA0KSIgfSwKICAgICJjYXJkTGciOiB7ICJ2YWx1ZSI6ICIwIDE4cHggNDhweCByZ2JhKDEwLDM4LDUxLDAuMTApIiB9LAogICAgImdsb3ciOiAgIHsgInZhbHVlIjogIjAgOHB4IDE4cHggcmdiYSg2MSwxNzcsNjQsMC4zMCkiIH0KICB9LAogICJtb3Rpb24iOiB7CiAgICAiZHVyYXRpb24iOiB7ICJmYXN0IjogIjE1MG1zIiwgImJhc2UiOiAiMjAwbXMiLCAic2xvdyI6ICIyODBtcyIsICJzbG93ZXIiOiAiNjAwbXMiIH0sCiAgICAiZWFzaW5nIjogewogICAgICAic3RhbmRhcmQiOiAgICJjdWJpYy1iZXppZXIoLjIsLjcsLjIsMSkiLAogICAgICAiZW50cmFuY2UiOiAgICJjdWJpYy1iZXppZXIoLjIsLjY1LC4yLDEpIiwKICAgICAgImVtcGhhc2l6ZWQiOiAiY3ViaWMtYmV6aWVyKC4xNiwxLC4zLDEpIgogICAgfQogIH0sCiAgInpJbmRleCI6IHsgInN0aWNreSI6IDMwLCAiZHJvcGRvd24iOiA1MCwgIm92ZXJsYXkiOiA5OSwgIm1vZGFsIjogMTAwLCAidG9hc3QiOiAxMTAgfSwKICAiYnJlYWtwb2ludCI6IHsgInNtIjogIjQ4MHB4IiwgIm1kIjogIjc2OHB4IiwgImxnIjogIjEwMjRweCIsICJ4bCI6ICIxMjgwcHgiIH0KfQo=" style="text-decoration:none;font-size:14px;padding:10px 16px">⬇ ownd-tokens.json — Style-Dictionary / Figma Tokens</a>
+        <a class="ds-badge ds-badge--brand" download href="data:application/javascript;base64,LyogPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CiAgIE9XTkQgRGVzaWduIFN5c3RlbSDigJQgVGFpbHdpbmQgcHJlc2V0CiAgIFVzYWdlICh0YWlsd2luZC5jb25maWcuanMpOgogICAgIG1vZHVsZS5leHBvcnRzID0geyBwcmVzZXRzOiBbcmVxdWlyZSgnLi9vd25kLWRzLWFzc2V0cy9vd25kLnRhaWx3aW5kLXByZXNldC5qcycpXSB9CiAgIFRoZW4gdXNlOiBiZy1icmFuZC01MDAsIHRleHQtaW5rLCByb3VuZGVkLXBpbGwsIHNoYWRvdy1jYXJkLCBldGMuCiAgID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSAqLwptb2R1bGUuZXhwb3J0cyA9IHsKICB0aGVtZTogewogICAgZXh0ZW5kOiB7CiAgICAgIGZvbnRGYW1pbHk6IHsgc2FuczogWydLYW5pdCcsICdzeXN0ZW0tdWknLCAnc2Fucy1zZXJpZiddIH0sCiAgICAgIGNvbG9yczogewogICAgICAgIGJyYW5kOiB7CiAgICAgICAgICBsaW1lOiAnIzc5RjIzMycsIDMwMDogJyMzREIxNDAnLCA1MDA6ICcjMDA3MDRDJywKICAgICAgICAgIDYwMDogJyMwMjYzNDgnLCA3MDA6ICcjMDA0RDMzJywgOTAwOiAnIzBBMjYzMycsIDEwMDA6ICcjMDYxQTIyJywKICAgICAgICB9LAogICAgICAgIHN1cmZhY2U6IHsgZGFyazogJyMwODM1MzgnLCBsaWdodDogJyNGOEY5RjYnLCBsaWdodDI6ICcjRjRGN0Y1JyB9LAogICAgICAgIGluazogJyMwQTI2MzMnLAogICAgICAgIG11dGVkOiAnIzVCNkE2QicsCiAgICAgICAgZGFuZ2VyOiAgeyBERUZBVUxUOiAnI0VGNDQ0NCcsIDcwMDogJyNCOTFDMUMnLCB0aW50OiAnI0ZGRjVGNScgfSwKICAgICAgICBzdWNjZXNzOiB7IERFRkFVTFQ6ICcjMTRCOEE2JywgNzAwOiAnIzBGNzY2RScsIHRpbnQ6ICcjRjBGREZBJyB9LAogICAgICAgIHdhcm5pbmc6IHsgREVGQVVMVDogJyNGNTlFMEInLCA3MDA6ICcjQjQ1MzA5JywgdGludDogJyNGRkZCRUInIH0sCiAgICAgICAgaW5mbzogICAgeyBERUZBVUxUOiAnIzI1NjNFQicsIHRpbnQ6ICcjRUZGNkZGJyB9LAogICAgICAgIHRpbnQ6ICcjRTZGNUVDJywKICAgICAgfSwKICAgICAgZm9udFNpemU6IHsKICAgICAgICBoMTogWydjbGFtcCgzNHB4LCA1dncsIDY0cHgpJywgeyBsaW5lSGVpZ2h0OiAnMS4xOCcsIGZvbnRXZWlnaHQ6ICc3MDAnIH1dLAogICAgICAgIGgyOiBbJ2NsYW1wKDI4cHgsIDR2dywgNTZweCknLCB7IGxpbmVIZWlnaHQ6ICcxLjIyJywgZm9udFdlaWdodDogJzcwMCcgfV0sCiAgICAgICAgaDM6IFsnY2xhbXAoMThweCwgMS40dncsIDIycHgpJywgeyBsaW5lSGVpZ2h0OiAnMS4yNScsIGZvbnRXZWlnaHQ6ICc3MDAnIH1dLAogICAgICAgIGxlZGU6IFsnY2xhbXAoMTVweCwgMS4xNXZ3LCAxNy41cHgpJywgeyBsaW5lSGVpZ2h0OiAnMS43JywgZm9udFdlaWdodDogJzMwMCcgfV0sCiAgICAgICAgZXllYnJvdzogWycxM3B4JywgeyBsZXR0ZXJTcGFjaW5nOiAnMC4zZW0nLCBmb250V2VpZ2h0OiAnNjAwJyB9XSwKICAgICAgfSwKICAgICAgYm9yZGVyUmFkaXVzOiB7IHNtOiAnMTJweCcsIG1kOiAnMTZweCcsIGxnOiAnMThweCcsIHhsOiAnMjRweCcsIHBpbGw6ICc1MHB4JyB9LAogICAgICBib3hTaGFkb3c6IHsKICAgICAgICBjYXJkOiAgICcwIDEycHggMzJweCByZ2JhKDEwLDM4LDUxLDAuMDgpLCAwIDJweCA2cHggcmdiYSgxMCwzOCw1MSwwLjA0KScsCiAgICAgICAgY2FyZGxnOiAnMCAxOHB4IDQ4cHggcmdiYSgxMCwzOCw1MSwwLjEwKScsCiAgICAgICAgZ2xvdzogICAnMCA4cHggMThweCByZ2JhKDYxLDE3Nyw2NCwwLjMwKScsCiAgICAgIH0sCiAgICAgIHRyYW5zaXRpb25UaW1pbmdGdW5jdGlvbjogewogICAgICAgIHN0YW5kYXJkOiAgICdjdWJpYy1iZXppZXIoLjIsLjcsLjIsMSknLAogICAgICAgIGVudHJhbmNlOiAgICdjdWJpYy1iZXppZXIoLjIsLjY1LC4yLDEpJywKICAgICAgICBlbXBoYXNpemVkOiAnY3ViaWMtYmV6aWVyKC4xNiwxLC4zLDEpJywKICAgICAgfSwKICAgICAgdHJhbnNpdGlvbkR1cmF0aW9uOiB7IGZhc3Q6ICcxNTBtcycsIGJhc2U6ICcyMDBtcycsIHNsb3c6ICcyODBtcycsIHNsb3dlcjogJzYwMG1zJyB9LAogICAgICB6SW5kZXg6IHsgc3RpY2t5OiAnMzAnLCBkcm9wZG93bjogJzUwJywgb3ZlcmxheTogJzk5JywgbW9kYWw6ICcxMDAnLCB0b2FzdDogJzExMCcgfSwKICAgICAgc2NyZWVuczogeyBzbTogJzQ4MHB4JywgbWQ6ICc3NjhweCcsIGxnOiAnMTAyNHB4JywgeGw6ICcxMjgwcHgnIH0sCiAgICB9LAogIH0sCn07Cg==" style="text-decoration:none;font-size:14px;padding:10px 16px">⬇ ownd.tailwind-preset.js — Tailwind preset</a>
+      </div>
+
+      <div class="ds-sub">วิธีใช้</div>
+      <div class="ds-code" style="border-radius:12px;border:none"><span class="lang">import</span><button class="ds-copy">Copy</button><pre>/* 1) CSS — import แล้วใช้ var() ได้เลย */
+@import "ownd-ds-assets/ownd-tokens.css";
+.btn{ background: var(--ownd-green-500); border-radius: var(--ownd-radius-pill); }
+
+/* 2) Tailwind — ใส่ใน tailwind.config.js */
+module.exports = { presets: [require('./ownd-ds-assets/ownd.tailwind-preset.js')] }
+/* → bg-brand-500, text-ink, rounded-pill, shadow-card, duration-base ... */
+
+/* 3) JSON — feed เข้า Style Dictionary / Figma Tokens / build script */</pre></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Global overlay components (Toast + Modal) -->
+<div id="dsToast" class="ds-toast" role="status" aria-live="polite">
+  <span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+  <span id="dsToastMsg">บันทึกเรียบร้อย</span>
+</div>
+<div class="ds-modal-overlay" id="demoModal" data-modal>
+  <div class="ds-modal" role="dialog" aria-modal="true" aria-labelledby="demoModalTitle">
+    <div class="mh">
+      <span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+      <div><h3 id="demoModalTitle">ยืนยันการส่งข้อมูล</h3></div>
+    </div>
+    <p>ระบบจะส่งข้อมูลของคุณให้ทีม OWND เพื่อประเมินสิทธิ์เช่าเพื่อซื้อ ดำเนินการต่อหรือไม่?</p>
+    <div class="actions">
+      <button class="ds-btn-ghost" onclick="closeModal('demoModal')">ยกเลิก</button>
+      <button class="ds-btn-solid" onclick="closeModal('demoModal'); showToast('ส่งข้อมูลเรียบร้อย')">ยืนยัน</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ---------- Copy buttons ---------- */
+  document.querySelectorAll('.ds-copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var pre = btn.parentElement.querySelector('pre');
+      var txt = pre ? pre.innerText : '';
+      navigator.clipboard.writeText(txt).then(function(){
+        var old = btn.textContent; btn.textContent = 'Copied ✓';
+        setTimeout(function(){ btn.textContent = old; }, 1400);
+      });
+    });
+  });
+
+  /* ---------- Viewport toggle ---------- */
+  function setVP(mode){
+    document.body.classList.toggle('vp-mobile', mode === 'mobile');
+    document.querySelectorAll('.vp-toggle button').forEach(function(b){
+      b.classList.toggle('active', b.dataset.vp === mode);
+    });
+  }
+
+  /* ---------- Scrollspy for sidebar ---------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('#dsNav a'));
+  var sections = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var id = '#' + e.target.id;
+        links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === id); });
+      }
+    });
+  }, { rootMargin: '-10% 0px -75% 0px', threshold: 0 });
+  sections.forEach(function(s){ if(s) obs.observe(s); });
+
+  /* ---------- Dropdowns ---------- */
+  /* 1) Custom form select */
+  document.querySelectorAll('.ds-select').forEach(function(sel){
+    var btn = sel.querySelector('.ds-select__btn');
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var open = sel.classList.toggle('is-open');
+      btn.classList.toggle('is-open', open);
+    });
+    sel.querySelectorAll('.ds-select__opt').forEach(function(opt){
+      opt.addEventListener('click', function(){
+        sel.querySelectorAll('.ds-select__opt').forEach(function(o){ o.classList.remove('is-selected'); });
+        opt.classList.add('is-selected');
+        var label = opt.getAttribute('data-label');
+        var icoHTML = opt.querySelector('.oico').innerHTML;
+        btn.innerHTML = '<span class="ds-select__ico">' + icoHTML + '</span>'
+          + '<span>' + label + '</span>'
+          + '<span class="ds-select__chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>';
+        btn.classList.remove('is-placeholder');
+        sel.classList.remove('is-open'); btn.classList.remove('is-open');
+      });
+    });
+  });
+  document.addEventListener('click', function(e){
+    document.querySelectorAll('.ds-select.is-open').forEach(function(sel){
+      if (!sel.contains(e.target)){
+        sel.classList.remove('is-open');
+        sel.querySelector('.ds-select__btn').classList.remove('is-open');
+      }
+    });
+  });
+
+  /* 2) Nav submenu accordion */
+  document.querySelectorAll('.menu-item[data-toggle]').forEach(function(t){
+    t.addEventListener('click', function(e){ e.preventDefault(); t.classList.toggle('is-expanded'); });
+  });
+
+  /* 3) Language single-select */
+  document.querySelectorAll('.menu-item[data-lang]').forEach(function(b){
+    b.addEventListener('click', function(e){
+      e.preventDefault();
+      var group = b.closest('.menu-sub') || document;
+      group.querySelectorAll('.menu-item[data-lang] .menu-lang-check').forEach(function(c){ c.classList.remove('is-checked'); });
+      var chk = b.querySelector('.menu-lang-check'); if (chk) chk.classList.add('is-checked');
+    });
+  });
+
+  /* ---------- Tabs ---------- */
+  document.querySelectorAll('[data-tabs]').forEach(function(tabs){
+    var scope = tabs.parentElement;
+    tabs.querySelectorAll('.ds-tab').forEach(function(tab){
+      tab.addEventListener('click', function(){
+        tabs.querySelectorAll('.ds-tab').forEach(function(t){ t.classList.remove('is-active'); });
+        tab.classList.add('is-active');
+        var id = tab.getAttribute('data-tab');
+        scope.querySelectorAll('.ds-tabpanel').forEach(function(p){
+          p.hidden = (p.getAttribute('data-panel') !== id);
+        });
+      });
+    });
+  });
+
+  /* ---------- Pagination ---------- */
+  document.querySelectorAll('[data-pager]').forEach(function(pager){
+    pager.querySelectorAll('button').forEach(function(b){
+      if (b.hasAttribute('aria-label')) return; /* skip prev/next for active-state demo */
+      b.addEventListener('click', function(){
+        pager.querySelectorAll('button').forEach(function(x){ if(!x.hasAttribute('aria-label')) x.classList.remove('is-active'); });
+        b.classList.add('is-active');
+      });
+    });
+  });
+
+  /* ---------- Modal ---------- */
+  window.openModal = function(id){ var m = document.getElementById(id); if(m) m.classList.add('is-open'); };
+  window.closeModal = function(id){ var m = document.getElementById(id); if(m) m.classList.remove('is-open'); };
+  document.querySelectorAll('[data-modal]').forEach(function(ov){
+    ov.addEventListener('click', function(e){ if(e.target === ov) ov.classList.remove('is-open'); });
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){ document.querySelectorAll('.ds-modal-overlay.is-open').forEach(function(m){ m.classList.remove('is-open'); }); }
+  });
+
+  /* ---------- Toast ---------- */
+  var _toastTimer = null;
+  window.showToast = function(msg){
+    var t = document.getElementById('dsToast'); if(!t) return;
+    document.getElementById('dsToastMsg').textContent = msg || 'เรียบร้อย';
+    t.classList.add('is-shown');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(function(){ t.classList.remove('is-shown'); }, 2600);
+  };
+</script>
+
+</body>
+</html>
