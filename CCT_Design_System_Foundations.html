@@ -1,0 +1,1828 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CCT Design System foundations documented from the supplied design-system board.">
+  <title>CCT Design System — Foundations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --doc-accent: #01639a;
+      --doc-accent-soft: #eaf5fb;
+      --doc-ink: #101820;
+      --doc-muted: #65717b;
+      --doc-line: #dce4e9;
+      --doc-paper: #ffffff;
+      --doc-canvas: #edf4f7;
+
+      --primary-1000: #42285c;
+      --primary-900: #5c387f;
+      --primary-800: #8757b8;
+      --primary-700: #b276f1;
+      --primary-600: #bd88f3;
+      --primary-500: #c99af5;
+      --primary-400: #d4acf7;
+      --primary-300: #dfbef8;
+      --primary-200: #ebd0fa;
+      --primary-100: #f6e2fc;
+
+      --secondary-1000: #002235;
+      --secondary-900: #014267;
+      --secondary-800: #01639a;
+      --secondary-700: #1771b7;
+      --secondary-600: #2d7ed4;
+      --secondary-500: #68a2e0;
+      --secondary-400: #86b5e6;
+      --secondary-300: #a4c7ec;
+      --secondary-200: #c1d9f2;
+      --secondary-100: #deebf8;
+
+      --tertiary-1000: #405617;
+      --tertiary-900: #5e7e22;
+      --tertiary-800: #7ca62d;
+      --tertiary-700: #99ca3c;
+      --tertiary-600: #b6d974;
+      --tertiary-500: #c5e190;
+      --tertiary-400: #d4e9ac;
+      --tertiary-300: #e2f0c8;
+      --tertiary-200: #f1f8e4;
+      --tertiary-100: #fafff1;
+
+      --grey-1000: #000000;
+      --grey-900: #24272a;
+      --grey-800: #3a3f45;
+      --grey-700: #6e7173;
+      --grey-600: #a2a2a2;
+      --grey-500: #c4c4c4;
+      --grey-400: #d1d1d1;
+      --grey-300: #ebebeb;
+      --grey-200: #f4f3f3;
+      --grey-100: #fefbfb;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 8% 3%, rgba(178, 118, 241, 0.14), transparent 24rem),
+        var(--doc-canvas);
+      color: var(--doc-ink);
+      font-family: "Prompt", "Noto Sans Thai", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 100;
+      padding: 10px 14px;
+      border-radius: 5px;
+      background: var(--grey-900);
+      color: white;
+      transform: translateY(-180%);
+      transition: transform 160ms ease;
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid rgba(0, 34, 53, 0.1);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar__inner {
+      width: min(1180px, calc(100% - 40px));
+      min-height: 64px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .brand__mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--primary-1000);
+      color: white;
+      font-size: 9px;
+      letter-spacing: 0;
+    }
+
+    .topnav {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: var(--doc-muted);
+      font-size: 11px;
+    }
+
+    .topnav a {
+      text-decoration: none;
+      transition: color 160ms ease;
+    }
+
+    .topnav a:hover,
+    .topnav a:focus-visible {
+      color: var(--doc-accent);
+    }
+
+    .document {
+      width: min(1240px, calc(100% - 32px));
+      margin: 28px auto 64px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 34, 53, 0.08);
+      border-radius: 22px;
+      background: var(--doc-paper);
+      box-shadow: 0 24px 76px rgba(0, 34, 53, 0.11);
+    }
+
+    .masthead {
+      padding: 30px 48px 24px;
+      border-bottom: 1px solid var(--doc-line);
+    }
+
+    .masthead__line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--doc-accent);
+    }
+
+    .masthead__title,
+    .masthead__meta {
+      margin: 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .masthead__meta {
+      color: var(--doc-accent);
+      text-align: right;
+    }
+
+    .hero {
+      position: relative;
+      isolation: isolate;
+      margin-top: 28px;
+      min-height: 370px;
+      padding: 42px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(250px, 0.65fr);
+      gap: 40px;
+      align-items: end;
+      overflow: hidden;
+      border-radius: 14px;
+      background: var(--secondary-1000);
+      color: white;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      border-radius: 50%;
+      filter: blur(2px);
+    }
+
+    .hero::before {
+      width: 360px;
+      height: 360px;
+      top: -170px;
+      right: 8%;
+      background: radial-gradient(circle, rgba(178, 118, 241, 0.64), rgba(178, 118, 241, 0));
+    }
+
+    .hero::after {
+      width: 300px;
+      height: 300px;
+      right: -70px;
+      bottom: -150px;
+      background: radial-gradient(circle, rgba(45, 126, 212, 0.58), rgba(45, 126, 212, 0));
+    }
+
+    .hero__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      color: var(--primary-300);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .hero__eyebrow::before {
+      content: "";
+      width: 24px;
+      height: 1px;
+      background: currentColor;
+    }
+
+    .hero h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(42px, 7vw, 76px);
+      line-height: 1.02;
+      letter-spacing: -0.055em;
+    }
+
+    .hero__lede {
+      max-width: 700px;
+      margin: 20px 0 0;
+      color: rgba(255, 255, 255, 0.73);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .hero__facts {
+      margin: 0;
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero__fact {
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.17);
+    }
+
+    .hero__fact dt {
+      margin: 0 0 4px;
+      color: rgba(255, 255, 255, 0.47);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .hero__fact dd {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    main {
+      padding: 0 48px 56px;
+    }
+
+    .section {
+      padding-top: 76px;
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      align-items: center;
+      margin-bottom: 34px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      color: var(--doc-accent);
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .section-heading__line {
+      height: 1px;
+      background: linear-gradient(90deg, var(--doc-accent), var(--doc-line));
+    }
+
+    .section-intro {
+      max-width: 760px;
+      margin: -14px 0 34px;
+      color: var(--doc-muted);
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      overflow: hidden;
+      border: 1px solid var(--doc-line);
+      border-radius: 12px;
+      background: var(--doc-line);
+    }
+
+    .overview-card {
+      min-height: 210px;
+      padding: 24px;
+      background: white;
+    }
+
+    .overview-card--primary {
+      background: linear-gradient(150deg, white 45%, var(--primary-100));
+    }
+
+    .overview-card--secondary {
+      background: linear-gradient(150deg, white 45%, var(--secondary-100));
+    }
+
+    .overview-card__index {
+      display: block;
+      margin-bottom: 28px;
+      color: var(--doc-muted);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .overview-card h3 {
+      margin: 0 0 10px;
+      font-size: 19px;
+    }
+
+    .overview-card p {
+      margin: 0;
+      color: var(--doc-muted);
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .evidence-note {
+      margin-top: 20px;
+      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 12px;
+      border-left: 3px solid var(--doc-accent);
+      background: var(--doc-accent-soft);
+      color: #1f485c;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .evidence-note__icon {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .palette-group + .palette-group {
+      margin-top: 46px;
+    }
+
+    .palette-layout {
+      display: grid;
+      grid-template-columns: minmax(180px, 0.24fr) minmax(0, 0.76fr);
+      gap: 30px;
+      align-items: start;
+    }
+
+    .palette-copy__tag {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 3px 6px;
+      border-radius: 3px;
+      background: #edf4ff;
+      color: #2862a7;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .palette-copy h3 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .palette-copy p {
+      margin: 0;
+      color: var(--doc-muted);
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .palette-scroll {
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .palette {
+      min-width: 810px;
+      display: grid;
+      grid-template-columns: repeat(10, minmax(78px, 1fr));
+      overflow: hidden;
+      border: 1px solid var(--doc-line);
+      border-radius: 10px;
+      background: var(--doc-line);
+      gap: 1px;
+    }
+
+    .swatch {
+      position: relative;
+      min-height: 118px;
+      padding: 13px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-end;
+      border: 0;
+      border-radius: 0;
+      background: var(--swatch);
+      color: var(--on-swatch, #101820);
+      text-align: left;
+      cursor: pointer;
+      transition: filter 160ms ease;
+    }
+
+    .swatch:hover {
+      filter: brightness(0.96);
+    }
+
+    .swatch:focus-visible {
+      z-index: 2;
+      outline: 3px solid var(--doc-accent);
+      outline-offset: -3px;
+    }
+
+    .swatch::after {
+      content: "Copy";
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 2px 5px;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      opacity: 0;
+      font-size: 7px;
+      font-weight: 700;
+      text-transform: uppercase;
+      transition: opacity 160ms ease;
+    }
+
+    .swatch:hover::after,
+    .swatch:focus-visible::after {
+      opacity: 0.65;
+    }
+
+    .swatch[data-copied="true"]::after {
+      content: "Copied";
+      opacity: 1;
+    }
+
+    .swatch__step {
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .swatch__value {
+      margin-top: 4px;
+      opacity: 0.74;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 8px;
+      text-transform: uppercase;
+    }
+
+    .alpha-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .alpha-row {
+      min-width: 810px;
+      display: grid;
+      grid-template-columns: repeat(10, minmax(78px, 1fr));
+      overflow: hidden;
+      border: 1px solid var(--doc-line);
+      border-radius: 10px;
+      background-color: white;
+      background-image:
+        linear-gradient(45deg, #e8ecef 25%, transparent 25%),
+        linear-gradient(-45deg, #e8ecef 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e8ecef 75%),
+        linear-gradient(-45deg, transparent 75%, #e8ecef 75%);
+      background-size: 14px 14px;
+      background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+    }
+
+    .alpha-swatch {
+      min-height: 86px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      border-right: 1px solid rgba(16, 24, 32, 0.08);
+      background: rgba(var(--alpha-rgb), var(--alpha));
+      color: var(--alpha-text);
+      font-size: 8px;
+      line-height: 1.45;
+    }
+
+    .alpha-swatch:last-child {
+      border-right: 0;
+    }
+
+    .alpha-swatch strong {
+      font-size: 10px;
+    }
+
+    .subsection {
+      margin-top: 54px;
+    }
+
+    .subsection__title {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 24px;
+      color: var(--doc-accent);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .subsection__title::after {
+      content: "";
+      height: 1px;
+      background: linear-gradient(90deg, var(--doc-accent), var(--doc-line));
+    }
+
+    .usage-map {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .usage-card {
+      min-height: 150px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 10px;
+      background: var(--card-bg);
+      color: var(--card-text, #101820);
+    }
+
+    .usage-card__label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .usage-card__use {
+      max-width: 190px;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .usage-card__source {
+      margin-top: 4px;
+      font-size: 8px;
+      opacity: 0.65;
+    }
+
+    .contrast-table-wrap {
+      overflow-x: auto;
+      border-top: 1px solid var(--doc-line);
+      border-bottom: 1px solid var(--doc-line);
+    }
+
+    .contrast-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10px;
+    }
+
+    .contrast-table th,
+    .contrast-table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--doc-line);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .contrast-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .contrast-table th {
+      color: var(--doc-muted);
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .contrast-pair {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: 600;
+    }
+
+    .contrast-dot {
+      width: 18px;
+      height: 18px;
+      border: 1px solid rgba(16, 24, 32, 0.12);
+      border-radius: 4px;
+    }
+
+    .contrast-result {
+      display: inline-flex;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: #eef1f3;
+      color: var(--doc-muted);
+      font-size: 8px;
+      font-weight: 700;
+    }
+
+    .contrast-result[data-result="pass"] {
+      background: #e9f7ef;
+      color: #08745f;
+    }
+
+    .contrast-result[data-result="large"] {
+      background: #fff4d4;
+      color: #8a5900;
+    }
+
+    .contrast-result[data-result="fail"] {
+      background: #fdecec;
+      color: #b42318;
+    }
+
+    .type-meta {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--doc-accent);
+      color: var(--doc-accent);
+    }
+
+    .type-meta strong {
+      font-size: 16px;
+    }
+
+    .type-meta span {
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .type-columns-label {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+      margin-bottom: 8px;
+      color: var(--doc-muted);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .type-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
+      border-bottom: 1px solid var(--doc-line);
+    }
+
+    .type-row:last-child {
+      border-bottom: 0;
+    }
+
+    .type-specimen {
+      min-height: 140px;
+      padding: 24px 0 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .type-specimen--empty {
+      opacity: 0.38;
+    }
+
+    .type-specimen__sample {
+      margin: 0;
+      line-height: 1.28;
+      letter-spacing: -0.02em;
+    }
+
+    .type-specimen__meta {
+      margin-top: 18px;
+      color: #929aa1;
+      font-size: 9px;
+      font-weight: 500;
+    }
+
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .icon-card {
+      min-height: 260px;
+      padding: 28px;
+      border: 1px solid var(--doc-line);
+      border-radius: 12px;
+      background:
+        linear-gradient(var(--primary-100), var(--primary-100)) 20px 20px / calc(100% - 40px) 1px no-repeat,
+        white;
+    }
+
+    .icon-card__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 34px;
+    }
+
+    .icon-card h3 {
+      margin: 0;
+      color: var(--primary-900);
+      font-size: 20px;
+    }
+
+    .icon-card__head span {
+      color: var(--doc-muted);
+      font-size: 9px;
+    }
+
+    .icon-size-demo {
+      min-height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .icon-outline {
+      width: var(--icon-size);
+      height: var(--icon-size);
+      display: grid;
+      place-items: center;
+      color: var(--primary-700);
+    }
+
+    .icon-outline svg {
+      width: 100%;
+      height: 100%;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .icon-size-label {
+      padding-top: 12px;
+      border-top: 1px solid var(--doc-line);
+      color: var(--doc-muted);
+      font-size: 9px;
+      line-height: 1.6;
+    }
+
+    .component-lab {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(310px, 0.75fr);
+      gap: 18px;
+    }
+
+    .preview-panel {
+      min-height: 540px;
+      padding: 28px;
+      overflow: hidden;
+      border: 1px solid var(--doc-line);
+      border-radius: 14px;
+      background: #f7f9fb;
+    }
+
+    .preview-panel__label {
+      margin: 0 0 22px;
+      color: var(--doc-muted);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .mobile-preview {
+      min-height: 445px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .phone-surface {
+      width: min(100%, 600px);
+      min-height: 370px;
+      padding: 34px 26px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 80% 18%, var(--primary-200), transparent 38%),
+        white;
+      box-shadow: 0 24px 50px rgba(0, 34, 53, 0.13);
+    }
+
+    .phone-surface__copy {
+      max-width: 330px;
+    }
+
+    .phone-surface__copy span {
+      color: var(--doc-accent);
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .phone-surface__copy h3 {
+      margin: 8px 0 8px;
+      font-size: 28px;
+    }
+
+    .phone-surface__copy p {
+      margin: 0;
+      color: var(--doc-muted);
+      font-size: 10px;
+      line-height: 1.65;
+    }
+
+    .bottom-nav {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: end;
+      min-height: 82px;
+      padding: 10px 14px;
+      border-radius: 18px 18px 0 0;
+      background: white;
+      box-shadow: 0 -8px 28px rgba(0, 34, 53, 0.1);
+    }
+
+    .nav-item {
+      min-width: 0;
+      display: grid;
+      place-items: center;
+      gap: 5px;
+      color: var(--grey-700);
+      font-size: 7px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .nav-item__icon {
+      position: relative;
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border: 1.5px solid currentColor;
+      border-radius: 7px;
+    }
+
+    .nav-item--active {
+      color: var(--primary-700);
+    }
+
+    .nav-item--search .nav-item__icon {
+      width: 56px;
+      height: 56px;
+      margin-top: -34px;
+      border: 7px solid var(--primary-100);
+      border-radius: 50%;
+      background: var(--primary-700);
+      color: white;
+      box-shadow: 0 8px 22px rgba(92, 56, 127, 0.22);
+    }
+
+    .nav-item--search .nav-item__icon::before {
+      content: "";
+      width: 16px;
+      height: 16px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+    }
+
+    .nav-item--search .nav-item__icon::after {
+      content: "";
+      position: absolute;
+      width: 7px;
+      height: 2px;
+      margin: 15px 0 0 16px;
+      background: currentColor;
+      transform: rotate(45deg);
+      transform-origin: left center;
+    }
+
+    .desktop-preview {
+      min-height: 445px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar {
+      width: 220px;
+      min-height: 430px;
+      padding: 0 18px 22px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-radius: 18px;
+      background: white;
+      box-shadow: 0 24px 50px rgba(0, 34, 53, 0.14);
+    }
+
+    .sidebar__brand {
+      margin: 0 -18px 14px;
+      min-height: 108px;
+      display: grid;
+      place-items: center;
+      background: var(--primary-900);
+      color: white;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .sidebar__item {
+      padding: 11px 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 999px;
+      color: var(--primary-900);
+      font-size: 9px;
+      font-weight: 500;
+    }
+
+    .sidebar__item--active {
+      background: var(--grey-300);
+      color: var(--secondary-800);
+    }
+
+    .sidebar__icon {
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid currentColor;
+      border-radius: 4px;
+    }
+
+    .sidebar__logout {
+      margin-top: auto;
+      padding: 9px 14px;
+      align-self: center;
+      border: 1px solid var(--primary-900);
+      border-radius: 999px;
+      background: white;
+      color: #d92d20;
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    .application-notes {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .application-note {
+      padding: 15px;
+      border: 1px solid var(--doc-line);
+      border-radius: 8px;
+      background: white;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .application-note strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .application-note span {
+      color: var(--doc-muted);
+    }
+
+    .coverage-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .coverage-card {
+      min-height: 190px;
+      padding: 22px;
+      border: 1px solid var(--doc-line);
+      border-radius: 10px;
+      background: white;
+    }
+
+    .coverage-card__status {
+      display: inline-flex;
+      margin-bottom: 18px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: var(--doc-accent-soft);
+      color: var(--doc-accent);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .coverage-card--pending .coverage-card__status {
+      background: #f1f2f3;
+      color: #6b737a;
+    }
+
+    .coverage-card h3 {
+      margin: 0 0 9px;
+      font-size: 15px;
+    }
+
+    .coverage-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--doc-muted);
+      font-size: 10px;
+      line-height: 1.85;
+    }
+
+    .source-footer {
+      margin: 68px -48px -56px;
+      padding: 28px 48px 32px;
+      border-top: 1px solid var(--doc-line);
+      background: #f7f9fa;
+      color: var(--doc-muted);
+      font-size: 9px;
+      line-height: 1.75;
+    }
+
+    .source-footer strong {
+      color: var(--doc-ink);
+    }
+
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      padding: 0 !important;
+      margin: -1px !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      white-space: nowrap !important;
+      border: 0 !important;
+    }
+
+    @media (max-width: 1020px) {
+      .topnav {
+        display: none;
+      }
+
+      .overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .palette-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .usage-map {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .component-lab {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .document {
+        width: 100%;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+      }
+
+      .masthead {
+        padding: 22px 20px 18px;
+      }
+
+      .masthead__line {
+        align-items: flex-start;
+      }
+
+      .masthead__meta {
+        max-width: 150px;
+      }
+
+      .hero {
+        min-height: auto;
+        padding: 30px 22px;
+        grid-template-columns: 1fr;
+      }
+
+      main {
+        padding: 0 20px 40px;
+      }
+
+      .section {
+        padding-top: 58px;
+      }
+
+      .overview-grid,
+      .usage-map,
+      .type-columns-label,
+      .type-row,
+      .icon-grid,
+      .application-notes,
+      .coverage-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .type-columns-label span:last-child {
+        display: none;
+      }
+
+      .type-specimen {
+        min-height: 112px;
+      }
+
+      .preview-panel {
+        padding: 18px;
+      }
+
+      .phone-surface {
+        padding-right: 12px;
+        padding-left: 12px;
+      }
+
+      .source-footer {
+        margin-right: -20px;
+        margin-left: -20px;
+        padding-right: 20px;
+        padding-left: 20px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 14mm;
+      }
+
+      body {
+        background: white;
+      }
+
+      .topbar {
+        display: none;
+      }
+
+      .document {
+        width: 100%;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .masthead,
+      main {
+        padding-right: 0;
+        padding-left: 0;
+      }
+
+      .section,
+      .palette-group,
+      .subsection,
+      .icon-card,
+      .preview-panel {
+        break-inside: avoid;
+      }
+
+      .palette-scroll {
+        overflow: visible;
+      }
+
+      .palette,
+      .alpha-row {
+        min-width: 0;
+      }
+
+      .swatch::after {
+        display: none;
+      }
+
+      .source-footer {
+        margin-right: 0;
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">ข้ามไปยังเนื้อหา</a>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="brand">
+        <span class="brand__mark" aria-hidden="true">CCT</span>
+        <span>Design System / Foundations</span>
+      </div>
+      <nav class="topnav" aria-label="สารบัญ">
+        <a href="#overview">Overview</a>
+        <a href="#colors">Colors</a>
+        <a href="#typography">Typography</a>
+        <a href="#icons">Icons</a>
+        <a href="#components">Components</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="document">
+    <header class="masthead">
+      <div class="masthead__line">
+        <p class="masthead__title">CCT Design System — Foundation Documentation</p>
+        <p class="masthead__meta">Color · Type · Icon · Navigation</p>
+      </div>
+
+      <div class="hero">
+        <div>
+          <span class="hero__eyebrow">Source-based documentation</span>
+          <h1>ชัดเจน<br>น่าเชื่อถือ<br>เข้าถึงง่าย</h1>
+          <p class="hero__lede">
+            รวบรวม Foundation และรูปแบบ Navigation จาก Design System เดิมของ CCT
+            ให้เป็นเอกสารกลางที่อ่านค่าได้เร็ว ใช้งานต่อได้ และเห็นข้อจำกัดของหลักฐานอย่างชัดเจน
+          </p>
+        </div>
+
+        <dl class="hero__facts">
+          <div class="hero__fact">
+            <dt>Font family</dt>
+            <dd>Prompt</dd>
+          </div>
+          <div class="hero__fact">
+            <dt>Color architecture</dt>
+            <dd>4 scales × 10 steps</dd>
+          </div>
+          <div class="hero__fact">
+            <dt>Icon sizes</dt>
+            <dd>24 px / 40 px</dd>
+          </div>
+        </dl>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="section" id="overview">
+        <div class="section-heading">
+          <h2>FOUNDATION OVERVIEW</h2>
+          <span class="section-heading__line" aria-hidden="true"></span>
+        </div>
+        <p class="section-intro">
+          ภาพต้นฉบับกำหนด Foundation หลักครบทั้งสี ตัวอักษร และขนาด Icon
+          พร้อมแสดงการนำ Primary color ไปใช้กับ Navigation บน Mobile และ Desktop
+        </p>
+
+        <div class="overview-grid">
+          <article class="overview-card overview-card--primary">
+            <span class="overview-card__index">01 / Brand</span>
+            <h3>Primary</h3>
+            <p>ม่วง 10 ระดับ ใช้กับ Active state, Icon และ Brand surface</p>
+          </article>
+          <article class="overview-card overview-card--secondary">
+            <span class="overview-card__index">02 / Information</span>
+            <h3>Secondary</h3>
+            <p>ฟ้า 10 ระดับ รองรับข้อความ ลิงก์ และบริบทข้อมูล</p>
+          </article>
+          <article class="overview-card">
+            <span class="overview-card__index">03 / Typography</span>
+            <h3>Prompt</h3>
+            <p>Bold และ Medium ครอบคลุมลำดับชั้นตั้งแต่ 12–32 px</p>
+          </article>
+          <article class="overview-card">
+            <span class="overview-card__index">04 / Iconography</span>
+            <h3>24 / 40 px</h3>
+            <p>ขนาดมาตรฐานสำหรับ Navigation และ Feature illustration</p>
+          </article>
+        </div>
+
+        <div class="evidence-note">
+          <span class="evidence-note__icon" aria-hidden="true">i</span>
+          <div>
+            <strong>ขอบเขตหลักฐาน:</strong> ค่า Font, Weight, Size และ Hex ถอดจากภาพ CCT โดยตรง
+            ส่วนคำอธิบายบทบาทของสีอ้างอิงจากตัวอย่าง Navigation ในภาพ
+            ค่า Spacing, Radius, Shadow, Line height และสถานะ Interaction ยังไม่ถูกระบุเป็น Token
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="colors">
+        <div class="section-heading">
+          <h2>COLOR SYSTEM</h2>
+          <span class="section-heading__line" aria-hidden="true"></span>
+        </div>
+        <p class="section-intro">
+          สีแต่ละกลุ่มเรียงจาก 1000 ซึ่งเข้มที่สุดไป 100 ซึ่งอ่อนที่สุด
+          กดที่ Swatch เพื่อคัดลอกค่า Hex
+        </p>
+
+        <div class="palette-group">
+          <div class="palette-layout">
+            <div class="palette-copy">
+              <span class="palette-copy__tag">Brand</span>
+              <h3>Primary</h3>
+              <p>ชุดสีม่วงหลัก ปรากฏใน Brand surface, Active navigation และ Icon</p>
+            </div>
+            <div class="palette-scroll">
+              <div class="palette" aria-label="Primary color scale">
+                <button class="swatch" type="button" style="--swatch:#42285C;--on-swatch:#FFFFFF" data-copy="#42285C"><span class="swatch__step">1000</span><span class="swatch__value">#42285C</span></button>
+                <button class="swatch" type="button" style="--swatch:#5C387F;--on-swatch:#FFFFFF" data-copy="#5C387F"><span class="swatch__step">900</span><span class="swatch__value">#5C387F</span></button>
+                <button class="swatch" type="button" style="--swatch:#8757B8;--on-swatch:#FFFFFF" data-copy="#8757B8"><span class="swatch__step">800</span><span class="swatch__value">#8757B8</span></button>
+                <button class="swatch" type="button" style="--swatch:#B276F1;--on-swatch:#000000" data-copy="#B276F1"><span class="swatch__step">700</span><span class="swatch__value">#B276F1</span></button>
+                <button class="swatch" type="button" style="--swatch:#BD88F3;--on-swatch:#000000" data-copy="#BD88F3"><span class="swatch__step">600</span><span class="swatch__value">#BD88F3</span></button>
+                <button class="swatch" type="button" style="--swatch:#C99AF5;--on-swatch:#000000" data-copy="#C99AF5"><span class="swatch__step">500</span><span class="swatch__value">#C99AF5</span></button>
+                <button class="swatch" type="button" style="--swatch:#D4ACF7;--on-swatch:#000000" data-copy="#D4ACF7"><span class="swatch__step">400</span><span class="swatch__value">#D4ACF7</span></button>
+                <button class="swatch" type="button" style="--swatch:#DFBEF8;--on-swatch:#000000" data-copy="#DFBEF8"><span class="swatch__step">300</span><span class="swatch__value">#DFBEF8</span></button>
+                <button class="swatch" type="button" style="--swatch:#EBD0FA;--on-swatch:#000000" data-copy="#EBD0FA"><span class="swatch__step">200</span><span class="swatch__value">#EBD0FA</span></button>
+                <button class="swatch" type="button" style="--swatch:#F6E2FC;--on-swatch:#000000" data-copy="#F6E2FC"><span class="swatch__step">100</span><span class="swatch__value">#F6E2FC</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-group">
+          <div class="palette-layout">
+            <div class="palette-copy">
+              <span class="palette-copy__tag">Information</span>
+              <h3>Secondary</h3>
+              <p>ชุดสีฟ้าสำหรับข้อมูล ลิงก์ หรือส่วนประกอบที่ต้องแยกจาก Brand purple</p>
+            </div>
+            <div class="palette-scroll">
+              <div class="palette" aria-label="Secondary color scale">
+                <button class="swatch" type="button" style="--swatch:#002235;--on-swatch:#FFFFFF" data-copy="#002235"><span class="swatch__step">1000</span><span class="swatch__value">#002235</span></button>
+                <button class="swatch" type="button" style="--swatch:#014267;--on-swatch:#FFFFFF" data-copy="#014267"><span class="swatch__step">900</span><span class="swatch__value">#014267</span></button>
+                <button class="swatch" type="button" style="--swatch:#01639A;--on-swatch:#FFFFFF" data-copy="#01639A"><span class="swatch__step">800</span><span class="swatch__value">#01639A</span></button>
+                <button class="swatch" type="button" style="--swatch:#1771B7;--on-swatch:#FFFFFF" data-copy="#1771B7"><span class="swatch__step">700</span><span class="swatch__value">#1771B7</span></button>
+                <button class="swatch" type="button" style="--swatch:#2D7ED4;--on-swatch:#FFFFFF" data-copy="#2D7ED4"><span class="swatch__step">600</span><span class="swatch__value">#2D7ED4</span></button>
+                <button class="swatch" type="button" style="--swatch:#68A2E0;--on-swatch:#000000" data-copy="#68A2E0"><span class="swatch__step">500</span><span class="swatch__value">#68A2E0</span></button>
+                <button class="swatch" type="button" style="--swatch:#86B5E6;--on-swatch:#000000" data-copy="#86B5E6"><span class="swatch__step">400</span><span class="swatch__value">#86B5E6</span></button>
+                <button class="swatch" type="button" style="--swatch:#A4C7EC;--on-swatch:#000000" data-copy="#A4C7EC"><span class="swatch__step">300</span><span class="swatch__value">#A4C7EC</span></button>
+                <button class="swatch" type="button" style="--swatch:#C1D9F2;--on-swatch:#000000" data-copy="#C1D9F2"><span class="swatch__step">200</span><span class="swatch__value">#C1D9F2</span></button>
+                <button class="swatch" type="button" style="--swatch:#DEEBF8;--on-swatch:#000000" data-copy="#DEEBF8"><span class="swatch__step">100</span><span class="swatch__value">#DEEBF8</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-group">
+          <div class="palette-layout">
+            <div class="palette-copy">
+              <span class="palette-copy__tag">Supporting</span>
+              <h3>Tertiary</h3>
+              <p>ชุดสีเขียวเสริมสำหรับการสื่อสารสถานะหรือความหมายที่ต่างจาก Primary/Secondary</p>
+            </div>
+            <div class="palette-scroll">
+              <div class="palette" aria-label="Tertiary color scale">
+                <button class="swatch" type="button" style="--swatch:#405617;--on-swatch:#FFFFFF" data-copy="#405617"><span class="swatch__step">1000</span><span class="swatch__value">#405617</span></button>
+                <button class="swatch" type="button" style="--swatch:#5E7E22;--on-swatch:#FFFFFF" data-copy="#5E7E22"><span class="swatch__step">900</span><span class="swatch__value">#5E7E22</span></button>
+                <button class="swatch" type="button" style="--swatch:#7CA62D;--on-swatch:#000000" data-copy="#7CA62D"><span class="swatch__step">800</span><span class="swatch__value">#7CA62D</span></button>
+                <button class="swatch" type="button" style="--swatch:#99CA3C;--on-swatch:#000000" data-copy="#99CA3C"><span class="swatch__step">700</span><span class="swatch__value">#99CA3C</span></button>
+                <button class="swatch" type="button" style="--swatch:#B6D974;--on-swatch:#000000" data-copy="#B6D974"><span class="swatch__step">600</span><span class="swatch__value">#B6D974</span></button>
+                <button class="swatch" type="button" style="--swatch:#C5E190;--on-swatch:#000000" data-copy="#C5E190"><span class="swatch__step">500</span><span class="swatch__value">#C5E190</span></button>
+                <button class="swatch" type="button" style="--swatch:#D4E9AC;--on-swatch:#000000" data-copy="#D4E9AC"><span class="swatch__step">400</span><span class="swatch__value">#D4E9AC</span></button>
+                <button class="swatch" type="button" style="--swatch:#E2F0C8;--on-swatch:#000000" data-copy="#E2F0C8"><span class="swatch__step">300</span><span class="swatch__value">#E2F0C8</span></button>
+                <button class="swatch" type="button" style="--swatch:#F1F8E4;--on-swatch:#000000" data-copy="#F1F8E4"><span class="swatch__step">200</span><span class="swatch__value">#F1F8E4</span></button>
+                <button class="swatch" type="button" style="--swatch:#FAFFF1;--on-swatch:#000000" data-copy="#FAFFF1"><span class="swatch__step">100</span><span class="swatch__value">#FAFFF1</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-group">
+          <div class="palette-layout">
+            <div class="palette-copy">
+              <span class="palette-copy__tag">Neutral</span>
+              <h3>Grey</h3>
+              <p>ฐานสีสำหรับข้อความ เส้นขอบ พื้นหลัง และ Disabled state</p>
+            </div>
+            <div class="palette-scroll">
+              <div class="palette" aria-label="Grey color scale">
+                <button class="swatch" type="button" style="--swatch:#000000;--on-swatch:#FFFFFF" data-copy="#000000"><span class="swatch__step">1000</span><span class="swatch__value">#000000</span></button>
+                <button class="swatch" type="button" style="--swatch:#24272A;--on-swatch:#FFFFFF" data-copy="#24272A"><span class="swatch__step">900</span><span class="swatch__value">#24272A</span></button>
+                <button class="swatch" type="button" style="--swatch:#3A3F45;--on-swatch:#FFFFFF" data-copy="#3A3F45"><span class="swatch__step">800</span><span class="swatch__value">#3A3F45</span></button>
+                <button class="swatch" type="button" style="--swatch:#6E7173;--on-swatch:#FFFFFF" data-copy="#6E7173"><span class="swatch__step">700</span><span class="swatch__value">#6E7173</span></button>
+                <button class="swatch" type="button" style="--swatch:#A2A2A2;--on-swatch:#000000" data-copy="#A2A2A2"><span class="swatch__step">600</span><span class="swatch__value">#A2A2A2</span></button>
+                <button class="swatch" type="button" style="--swatch:#C4C4C4;--on-swatch:#000000" data-copy="#C4C4C4"><span class="swatch__step">500</span><span class="swatch__value">#C4C4C4</span></button>
+                <button class="swatch" type="button" style="--swatch:#D1D1D1;--on-swatch:#000000" data-copy="#D1D1D1"><span class="swatch__step">400</span><span class="swatch__value">#D1D1D1</span></button>
+                <button class="swatch" type="button" style="--swatch:#EBEBEB;--on-swatch:#000000" data-copy="#EBEBEB"><span class="swatch__step">300</span><span class="swatch__value">#EBEBEB</span></button>
+                <button class="swatch" type="button" style="--swatch:#F4F3F3;--on-swatch:#000000" data-copy="#F4F3F3"><span class="swatch__step">200</span><span class="swatch__value">#F4F3F3</span></button>
+                <button class="swatch" type="button" style="--swatch:#FEFBFB;--on-swatch:#000000" data-copy="#FEFBFB"><span class="swatch__step">100</span><span class="swatch__value">#FEFBFB</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection__title">ALPHA — Black / White</div>
+          <div class="palette-scroll">
+            <div class="alpha-stack">
+              <div class="alpha-row" aria-label="Black alpha scale">
+                <div class="alpha-swatch" style="--alpha-rgb:0,0,0;--alpha:1;--alpha-text:white"><strong>100%</strong>Black</div>
+                <div class="alpha-swatch" style="--alpha-rgb:0,0,0;--alpha:.9;--alpha-text:white"><strong>90%</strong>Black</div>
+                <div class="alpha-swatch" style="--alpha-rgb:0,0,0;--alpha:.8;--alpha-text:white"><strong>80%</strong>Black</div>
+                <div class="alpha-swatch" style="--alpha-rgb:0,0,0;--alpha:.7;--alpha-text:white"><strong>70%</strong>Black</div>
+                <div class="alpha-swatch" style="--alpha-rgb:0,0,0;--alpha:.6;--alpha-text:white"><strong>60%</strong>Black</div>
+                <div class="alpha-swatch" style="--alpha-rgb:0,0,0;--alpha:.5;--alpha-text:white"><strong>50%</strong>Black</div>
+                <div class="alpha-swatch" style="--alpha-rgb:0,0,0;--alpha:.4;--alpha-text:black"><strong>40%</strong>Black</div>
+                <div class="alpha-swatch" style="--alpha-rgb:0,0,0;--alpha:.3;--alpha-text:black"><strong>30%</strong>Black</div>
+                <div class="alpha-swatch" style="--alpha-rgb:0,0,0;--alpha:.2;--alpha-text:black"><strong>20%</strong>Black</div>
+                <div class="alpha-swatch" style="--alpha-rgb:0,0,0;--alpha:.1;--alpha-text:black"><strong>10%</strong>Black</div>
+              </div>
+              <div class="alpha-row" aria-label="White alpha scale" style="background-color:#6E7173">
+                <div class="alpha-swatch" style="--alpha-rgb:255,255,255;--alpha:1;--alpha-text:black"><strong>100%</strong>White</div>
+                <div class="alpha-swatch" style="--alpha-rgb:255,255,255;--alpha:.9;--alpha-text:black"><strong>90%</strong>White</div>
+                <div class="alpha-swatch" style="--alpha-rgb:255,255,255;--alpha:.8;--alpha-text:black"><strong>80%</strong>White</div>
+                <div class="alpha-swatch" style="--alpha-rgb:255,255,255;--alpha:.7;--alpha-text:black"><strong>70%</strong>White</div>
+                <div class="alpha-swatch" style="--alpha-rgb:255,255,255;--alpha:.6;--alpha-text:black"><strong>60%</strong>White</div>
+                <div class="alpha-swatch" style="--alpha-rgb:255,255,255;--alpha:.5;--alpha-text:white"><strong>50%</strong>White</div>
+                <div class="alpha-swatch" style="--alpha-rgb:255,255,255;--alpha:.4;--alpha-text:white"><strong>40%</strong>White</div>
+                <div class="alpha-swatch" style="--alpha-rgb:255,255,255;--alpha:.3;--alpha-text:white"><strong>30%</strong>White</div>
+                <div class="alpha-swatch" style="--alpha-rgb:255,255,255;--alpha:.2;--alpha-text:white"><strong>20%</strong>White</div>
+                <div class="alpha-swatch" style="--alpha-rgb:255,255,255;--alpha:.1;--alpha-text:white"><strong>10%</strong>White</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection__title">USAGE MAP — สิ่งที่เห็นจากตัวอย่าง UI</div>
+          <div class="usage-map">
+            <article class="usage-card" style="--card-bg:#42285C;--card-text:#FFFFFF">
+              <span class="usage-card__label">Primary 1000</span>
+              <div><div class="usage-card__use">Brand surface และพื้นที่เข้ม</div><div class="usage-card__source">Observed in sidebar header</div></div>
+            </article>
+            <article class="usage-card" style="--card-bg:#B276F1;--card-text:#000000">
+              <span class="usage-card__label">Primary 700</span>
+              <div><div class="usage-card__use">Active icon และ Search action</div><div class="usage-card__source">Observed in navigation</div></div>
+            </article>
+            <article class="usage-card" style="--card-bg:#01639A;--card-text:#FFFFFF">
+              <span class="usage-card__label">Secondary 800</span>
+              <div><div class="usage-card__use">ลิงก์หรือข้อความข้อมูล</div><div class="usage-card__source">Role inferred from palette and UI</div></div>
+            </article>
+            <article class="usage-card" style="--card-bg:#EBEBEB;--card-text:#24272A">
+              <span class="usage-card__label">Grey 300</span>
+              <div><div class="usage-card__use">พื้นหลัง Active item แบบ Neutral</div><div class="usage-card__source">Observed in desktop navigation</div></div>
+            </article>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection__title">WCAG CONTRAST CHECK — คำนวณจากค่า Hex</div>
+          <div class="contrast-table-wrap">
+            <table class="contrast-table">
+              <thead>
+                <tr><th scope="col">คู่สี</th><th scope="col">Foreground</th><th scope="col">Background</th><th scope="col">Ratio</th><th scope="col">WCAG AA</th></tr>
+              </thead>
+              <tbody>
+                <tr data-contrast-fg="#FFFFFF" data-contrast-bg="#42285C"><td><span class="contrast-pair"><span class="contrast-dot" style="background:#42285C"></span>White on Primary 1000</span></td><td>#FFFFFF</td><td>#42285C</td><td data-ratio>—</td><td><span class="contrast-result" data-status>—</span></td></tr>
+                <tr data-contrast-fg="#000000" data-contrast-bg="#B276F1"><td><span class="contrast-pair"><span class="contrast-dot" style="background:#B276F1"></span>Black on Primary 700</span></td><td>#000000</td><td>#B276F1</td><td data-ratio>—</td><td><span class="contrast-result" data-status>—</span></td></tr>
+                <tr data-contrast-fg="#FFFFFF" data-contrast-bg="#01639A"><td><span class="contrast-pair"><span class="contrast-dot" style="background:#01639A"></span>White on Secondary 800</span></td><td>#FFFFFF</td><td>#01639A</td><td data-ratio>—</td><td><span class="contrast-result" data-status>—</span></td></tr>
+                <tr data-contrast-fg="#000000" data-contrast-bg="#7CA62D"><td><span class="contrast-pair"><span class="contrast-dot" style="background:#7CA62D"></span>Black on Tertiary 800</span></td><td>#000000</td><td>#7CA62D</td><td data-ratio>—</td><td><span class="contrast-result" data-status>—</span></td></tr>
+                <tr data-contrast-fg="#24272A" data-contrast-bg="#FFFFFF"><td><span class="contrast-pair"><span class="contrast-dot" style="background:#24272A"></span>Grey 900 on White</span></td><td>#24272A</td><td>#FFFFFF</td><td data-ratio>—</td><td><span class="contrast-result" data-status>—</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="evidence-note">
+            <span class="evidence-note__icon" aria-hidden="true">!</span>
+            <div>ตรวจข้อความปกติที่ 4.5:1 และข้อความขนาดใหญ่ที่ 3:1 ตารางนี้เป็นผลคำนวณจากค่าในภาพ ไม่ได้เปลี่ยน Token ต้นฉบับ</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="typography">
+        <div class="section-heading">
+          <h2>TYPOGRAPHY</h2>
+          <span class="section-heading__line" aria-hidden="true"></span>
+        </div>
+        <div class="type-meta">
+          <strong>Prompt type scale</strong>
+          <span>Weights: Bold / Medium</span>
+        </div>
+
+        <div class="subsection">
+          <div class="subsection__title">TYPE SCALE — Bold และ Medium</div>
+          <div class="type-columns-label" aria-hidden="true"><span>Bold / 700</span><span>Medium / 500</span></div>
+
+          <div class="type-row">
+            <article class="type-specimen"><p class="type-specimen__sample" style="font-size:32px;font-weight:700">Heading 1</p><div class="type-specimen__meta">H1 · Bold · 32 px</div></article>
+            <article class="type-specimen"><p class="type-specimen__sample" style="font-size:24px;font-weight:500">Heading 1</p><div class="type-specimen__meta">H1 · Medium · 24 px</div></article>
+          </div>
+          <div class="type-row">
+            <article class="type-specimen"><p class="type-specimen__sample" style="font-size:24px;font-weight:700">Heading 2</p><div class="type-specimen__meta">H2 · Bold · 24 px</div></article>
+            <article class="type-specimen type-specimen--empty"><p class="type-specimen__sample" style="font-size:14px">ไม่มี H2 Medium ในภาพต้นฉบับ</p><div class="type-specimen__meta">Not specified</div></article>
+          </div>
+          <div class="type-row">
+            <article class="type-specimen"><p class="type-specimen__sample" style="font-size:20px;font-weight:700">Paragraph 1 — ตัวอย่างข้อความภาษาไทย</p><div class="type-specimen__meta">P1 · Bold · 20 px</div></article>
+            <article class="type-specimen"><p class="type-specimen__sample" style="font-size:18px;font-weight:500">Paragraph 1 — ตัวอย่างข้อความภาษาไทย</p><div class="type-specimen__meta">P1 · Medium · 18 px</div></article>
+          </div>
+          <div class="type-row">
+            <article class="type-specimen"><p class="type-specimen__sample" style="font-size:18px;font-weight:700">Paragraph 2 — ตัวอย่างข้อความภาษาไทย</p><div class="type-specimen__meta">P2 · Bold · 18 px</div></article>
+            <article class="type-specimen"><p class="type-specimen__sample" style="font-size:16px;font-weight:500">Paragraph 2 — ตัวอย่างข้อความภาษาไทย</p><div class="type-specimen__meta">P2 · Medium · 16 px</div></article>
+          </div>
+          <div class="type-row">
+            <article class="type-specimen"><p class="type-specimen__sample" style="font-size:16px;font-weight:700">Paragraph 3 — ตัวอย่างข้อความภาษาไทย</p><div class="type-specimen__meta">P3 · Bold · 16 px</div></article>
+            <article class="type-specimen"><p class="type-specimen__sample" style="font-size:14px;font-weight:500">Paragraph 3 — ตัวอย่างข้อความภาษาไทย</p><div class="type-specimen__meta">P3 · Medium · 14 px</div></article>
+          </div>
+          <div class="type-row">
+            <article class="type-specimen"><p class="type-specimen__sample" style="font-size:14px;font-weight:700">Paragraph 4 — Label และข้อความรอง</p><div class="type-specimen__meta">P4 · Bold · 14 px</div></article>
+            <article class="type-specimen"><p class="type-specimen__sample" style="font-size:12px;font-weight:500">Paragraph 4 — Label และข้อความรอง</p><div class="type-specimen__meta">P4 · Medium · 12 px</div></article>
+          </div>
+          <div class="type-row">
+            <article class="type-specimen"><p class="type-specimen__sample" style="font-size:12px;font-weight:700">Paragraph 5 — ข้อความขนาดเล็ก</p><div class="type-specimen__meta">P5 · Bold · 12 px</div></article>
+            <article class="type-specimen type-specimen--empty"><p class="type-specimen__sample" style="font-size:12px">ไม่มี P5 Medium ในภาพต้นฉบับ</p><div class="type-specimen__meta">Not specified</div></article>
+          </div>
+        </div>
+
+        <div class="evidence-note">
+          <span class="evidence-note__icon" aria-hidden="true">i</span>
+          <div>ต้นฉบับระบุ Font family, Weight และ Font size แต่ไม่ได้ระบุ Line height หรือ Letter spacing จึงไม่กำหนดค่าดังกล่าวเป็น Token เพิ่มเอง</div>
+        </div>
+      </section>
+
+      <section class="section" id="icons">
+        <div class="section-heading">
+          <h2>ICONOGRAPHY</h2>
+          <span class="section-heading__line" aria-hidden="true"></span>
+        </div>
+        <p class="section-intro">ภาพต้นฉบับกำหนด Icon สองขนาดหลัก ตัวอย่างด้านล่างใช้เส้นจำลองเพื่อแสดง Scale เท่านั้น ไม่ใช่ไฟล์ Icon ต้นฉบับ</p>
+
+        <div class="icon-grid">
+          <article class="icon-card">
+            <div class="icon-card__head"><h3>Icon 24 px</h3><span>Navigation / Utility</span></div>
+            <div class="icon-size-demo">
+              <div class="icon-outline" style="--icon-size:24px"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/></svg></div>
+              <div class="icon-outline" style="--icon-size:24px"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></div>
+              <div class="icon-outline" style="--icon-size:24px"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></div>
+            </div>
+            <div class="icon-size-label">ขนาด 24 px ปรากฏในชุด Navigation และเครื่องมือทั่วไป</div>
+          </article>
+
+          <article class="icon-card">
+            <div class="icon-card__head"><h3>Icon 40 px</h3><span>Feature / Category</span></div>
+            <div class="icon-size-demo">
+              <div class="icon-outline" style="--icon-size:40px"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="14" r="7"/><path d="M7 34c1-8 6-12 13-12s12 4 13 12"/></svg></div>
+              <div class="icon-outline" style="--icon-size:40px"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="8" y="8" width="24" height="26" rx="3"/><path d="M14 14h12M14 20h12M14 26h7"/></svg></div>
+              <div class="icon-outline" style="--icon-size:40px"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 34s-12-7-12-17a7 7 0 0 1 12-5 7 7 0 0 1 12 5c0 10-12 17-12 17Z"/><path d="M15 20h10"/></svg></div>
+            </div>
+            <div class="icon-size-label">ขนาด 40 px ปรากฏใน Feature icon และหมวดหมู่ขนาดใหญ่</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="components">
+        <div class="section-heading">
+          <h2>COMPONENT APPLICATION</h2>
+          <span class="section-heading__line" aria-hidden="true"></span>
+        </div>
+        <p class="section-intro">ตัวอย่างจัดองค์ประกอบใหม่จาก Navigation ที่เห็นในภาพ เพื่อแสดงความสัมพันธ์ระหว่าง Primary, Grey และ Icon size โดยไม่อ้างว่าเป็น Component specification ฉบับสมบูรณ์</p>
+
+        <div class="component-lab">
+          <article class="preview-panel">
+            <p class="preview-panel__label">Mobile / Bottom navigation</p>
+            <div class="mobile-preview">
+              <div class="phone-surface">
+                <div class="phone-surface__copy">
+                  <span>Eligibility service</span>
+                  <h3>ตรวจสอบข้อมูลได้จากจุดเดียว</h3>
+                  <p>Navigation คงจุดหมายหลักไว้ 5 รายการ และยก Search ให้เด่นขึ้นด้วย Floating action</p>
+                </div>
+                <nav class="bottom-nav" aria-label="ตัวอย่าง Bottom navigation">
+                  <div class="nav-item"><span class="nav-item__icon"></span><span>หน้าแรก</span></div>
+                  <div class="nav-item"><span class="nav-item__icon"></span><span>สถานะ</span></div>
+                  <div class="nav-item nav-item--active nav-item--search"><span class="nav-item__icon"></span><span>ค้นหา</span></div>
+                  <div class="nav-item"><span class="nav-item__icon"></span><span>แจ้งเตือน</span></div>
+                  <div class="nav-item"><span class="nav-item__icon"></span><span>บัญชีผู้ใช้</span></div>
+                </nav>
+              </div>
+            </div>
+          </article>
+
+          <article class="preview-panel">
+            <p class="preview-panel__label">Desktop / Sidebar navigation</p>
+            <div class="desktop-preview">
+              <nav class="sidebar" aria-label="ตัวอย่าง Sidebar navigation">
+                <div class="sidebar__brand">CCT</div>
+                <div class="sidebar__item sidebar__item--active"><span class="sidebar__icon"></span>Home</div>
+                <div class="sidebar__item"><span class="sidebar__icon"></span>ค้นหา</div>
+                <div class="sidebar__item"><span class="sidebar__icon"></span>Dashboard</div>
+                <div class="sidebar__item"><span class="sidebar__icon"></span>คำถามที่พบบ่อย</div>
+                <div class="sidebar__item"><span class="sidebar__icon"></span>ข้อมูลการลงทะเบียน</div>
+                <div class="sidebar__item"><span class="sidebar__icon"></span>การแจ้งเตือน</div>
+                <button class="sidebar__logout" type="button">Logout</button>
+              </nav>
+            </div>
+          </article>
+        </div>
+
+        <div class="application-notes">
+          <article class="application-note"><strong>Primary hierarchy</strong><span>ใช้ม่วงกับ Active state และจุดโฟกัสสำคัญ</span></article>
+          <article class="application-note"><strong>Neutral structure</strong><span>Grey ทำหน้าที่กับข้อความรองและพื้นหลังของรายการ</span></article>
+          <article class="application-note"><strong>Responsive pattern</strong><span>Mobile ใช้ Bottom navigation ส่วน Desktop ใช้ Sidebar</span></article>
+        </div>
+      </section>
+
+      <section class="section" id="coverage">
+        <div class="section-heading">
+          <h2>SYSTEM COVERAGE</h2>
+          <span class="section-heading__line" aria-hidden="true"></span>
+        </div>
+        <p class="section-intro">สรุปว่าอะไรยืนยันได้จากภาพ และอะไรต้องกำหนดเพิ่มก่อนนำ Design System ไปใช้กับ Product จริง</p>
+
+        <div class="coverage-grid">
+          <article class="coverage-card">
+            <span class="coverage-card__status">Documented</span>
+            <h3>Foundations</h3>
+            <ul><li>Color scales และ Alpha</li><li>Font family และ Weights</li><li>Type scale 12–32 px</li><li>Icon sizes 24 / 40 px</li></ul>
+          </article>
+          <article class="coverage-card">
+            <span class="coverage-card__status">Observed</span>
+            <h3>Patterns</h3>
+            <ul><li>Mobile Bottom navigation</li><li>Desktop Sidebar navigation</li><li>Active / Inactive states</li><li>Central Search action</li></ul>
+          </article>
+          <article class="coverage-card coverage-card--pending">
+            <span class="coverage-card__status">Not specified</span>
+            <h3>ต้องกำหนดเพิ่ม</h3>
+            <ul><li>Spacing, Grid และ Breakpoints</li><li>Radius, Border และ Shadow</li><li>Line height และ Letter spacing</li><li>Semantic colors และ State rules</li></ul>
+          </article>
+        </div>
+      </section>
+
+      <footer class="source-footer">
+        <strong>Source method:</strong> ถอดค่าที่อ่านได้จากภาพ <em>CCT.jpg</em>
+        และจัดโครงสร้างใหม่ตามแนวทางของภาพตัวอย่าง Color System และ Typography
+        ตัวอย่าง UI ในเอกสารนี้สร้างขึ้นเพื่อสาธิตการใช้ Foundation ไม่ใช่การคัดลอกหน้าจอ Production
+      </footer>
+    </main>
+  </div>
+
+  <div class="visually-hidden" role="status" aria-live="polite" id="copy-status"></div>
+
+  <script>
+    (function () {
+      const copyStatus = document.getElementById("copy-status");
+
+      function fallbackCopy(text) {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+      }
+
+      document.querySelectorAll("[data-copy]").forEach((swatch) => {
+        swatch.addEventListener("click", async () => {
+          const value = swatch.dataset.copy;
+          try {
+            if (navigator.clipboard && window.isSecureContext) {
+              await navigator.clipboard.writeText(value);
+            } else {
+              fallbackCopy(value);
+            }
+            swatch.dataset.copied = "true";
+            copyStatus.textContent = "คัดลอก " + value + " แล้ว";
+            window.setTimeout(() => {
+              delete swatch.dataset.copied;
+            }, 1400);
+          } catch (error) {
+            copyStatus.textContent = "ไม่สามารถคัดลอกค่าได้";
+          }
+        });
+      });
+
+      function hexToRgb(hex) {
+        const value = parseInt(hex.replace("#", ""), 16);
+        return {
+          r: (value >> 16) & 255,
+          g: (value >> 8) & 255,
+          b: value & 255
+        };
+      }
+
+      function relativeLuminance(hex) {
+        const rgb = hexToRgb(hex);
+        const channels = [rgb.r, rgb.g, rgb.b].map((channel) => {
+          const value = channel / 255;
+          return value <= 0.03928
+            ? value / 12.92
+            : Math.pow((value + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+      }
+
+      function contrastRatio(foreground, background) {
+        const first = relativeLuminance(foreground);
+        const second = relativeLuminance(background);
+        const lighter = Math.max(first, second);
+        const darker = Math.min(first, second);
+        return (lighter + 0.05) / (darker + 0.05);
+      }
+
+      document.querySelectorAll("[data-contrast-fg]").forEach((row) => {
+        const ratio = contrastRatio(row.dataset.contrastFg, row.dataset.contrastBg);
+        const ratioCell = row.querySelector("[data-ratio]");
+        const status = row.querySelector("[data-status]");
+        ratioCell.textContent = ratio.toFixed(2) + ":1";
+
+        if (ratio >= 4.5) {
+          status.textContent = "AA Pass";
+          status.dataset.result = "pass";
+        } else if (ratio >= 3) {
+          status.textContent = "Large only";
+          status.dataset.result = "large";
+        } else {
+          status.textContent = "Fail";
+          status.dataset.result = "fail";
+        }
+      });
+    }());
+  </script>
+</body>
+</html>
