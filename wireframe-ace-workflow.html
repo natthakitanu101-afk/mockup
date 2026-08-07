@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe — ACE §06 Hero workflow (จัดวางใหม่)</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#141414;--mid:#6b6b6b;--line:#c9c9c9;--fill:#efefef;--flag:#b3261e}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'IBM Plex Sans Thai',sans-serif;background:#fafafa;color:var(--ink);line-height:1.65}
+  .mono{font-family:'JetBrains Mono',monospace}
+  .page{max-width:920px;margin:0 auto;background:#fff;border-left:1px solid var(--line);border-right:1px solid var(--line);padding-bottom:60px}
+  .doc-head{padding:24px 32px;border-bottom:2px solid var(--ink)}
+  .doc-head h1{font-size:1.1rem}
+  .doc-head p{font-size:.84rem;color:var(--mid);margin-top:4px}
+  section{padding:26px 32px}
+  .flag{display:inline-block;background:var(--flag);color:#fff;font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:20px;vertical-align:middle;margin-right:6px}
+  .note{border-left:3px solid var(--flag);background:#fdf3f2;padding:9px 13px;font-size:.8rem;margin:14px 0;border-radius:0 5px 5px 0}
+  .note b{color:var(--flag)}
+  .lbl{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);display:block;margin-bottom:6px}
+  h2{font-size:1.5rem;line-height:1.3;margin-bottom:6px}
+  .sub{font-size:.86rem;color:var(--mid);max-width:560px;margin-bottom:20px}
+
+  .flows{display:grid;grid-template-columns:1fr 36px 1fr;gap:12px;align-items:stretch}
+  .card{border:1.5px solid var(--ink);border-radius:10px;padding:16px 18px;background:#fff}
+  .card.alt{background:var(--fill)}
+  .card h3{font-size:1.05rem;margin:4px 0 10px}
+  ol{padding-left:20px;font-size:.85rem}
+  ol li{margin-bottom:6px;border-bottom:1px solid var(--line);padding-bottom:6px}
+  ol li:last-child{border-bottom:0}
+  .arrow{display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--mid)}
+  .substrip{margin-top:10px;border-top:1.5px dashed var(--line);padding-top:10px}
+  .substrip .mini{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .mini div{border:1px solid var(--line);border-radius:6px;padding:7px 4px;text-align:center;font-size:.68rem;background:#fff}
+  .mini b{display:block;font-family:'JetBrains Mono',monospace;font-size:.78rem}
+  .substrip .cap{font-size:.68rem;color:var(--mid);margin-top:6px}
+
+  .struct{margin-top:14px;border:2px solid var(--ink);border-radius:10px;overflow:hidden}
+  .struct-head{background:var(--ink);color:#fff;padding:9px 16px;font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.14em}
+  .struct-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+  .struct-grid > div{padding:16px;border-right:1px solid var(--line);text-align:center}
+  .struct-grid > div:last-child{border-right:0}
+  .struct-grid .what{font-size:.74rem;color:var(--mid);margin-bottom:4px}
+  .struct-grid .delta{font-size:1.15rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+  .struct-cap{padding:10px 16px;border-top:1px solid var(--line);font-size:.76rem;color:var(--mid)}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="doc-head">
+  <h1>Wireframe — ACE · 06 Hero workflow (จัดวางใหม่)</h1>
+  <p>เป้าหมาย: เอาตาราง Structural effect กลับมา โดยอยู่ร่วมกับการ์ด flow และแถบ MIN/MAX อย่างมีลำดับเหตุผล</p>
+</div>
+
+<section>
+  <span class="lbl">06 / Hero workflow</span>
+  <h2>ลดการสลับไปมา<br>ในงานออกเกรด</h2>
+  <p class="sub">แนวคิดหลักคือรวมการคำนวณ ตรวจ และเผยแพร่ไว้ใน flow เดียว โดยให้ครูยังคงเป็นผู้ตรวจสอบและตัดสินใจขั้นสุดท้ายก่อนยืนยัน</p>
+
+  <!-- 1) การ์ดสอง flow -->
+  <div class="flows">
+    <div class="card">
+      <span class="lbl">As-is hypothesis</span>
+      <h3>Manual + Excel</h3>
+      <ol>
+        <li>รวมคะแนน</li>
+        <li>เปิด spreadsheet นอกระบบ</li>
+        <li>คำนวณค่าสถิติ</li>
+        <li>แบ่งช่วงเกรด</li>
+        <li>ตรวจและกรอกกลับระบบ</li>
+      </ol>
+    </div>
+    <div class="arrow">→</div>
+    <div class="card alt">
+      <span class="lbl">Proposed flow</span>
+      <h3>One guided flow</h3>
+      <ol>
+        <li>รวมคะแนนในระบบ</li>
+        <li>ระบบเสนอช่วงเกรด</li>
+        <li>ครูตรวจและปรับแก้</li>
+        <li>ยืนยันและเผยแพร่</li>
+      </ol>
+      <!-- MIN/MAX ย้ายมาเกาะขั้นตอนที่มันเกิดจริง -->
+      <div class="substrip">
+        <span class="lbl">ในขั้นตอนที่ 2 — ระบบใช้ค่าสถิติประกอบการเสนอ</span>
+        <div class="mini">
+          <div>Minimum<b>MIN</b></div>
+          <div>Maximum<b>MAX</b></div>
+          <div>Average<b>MEAN</b></div>
+          <div>Spread<b>SD</b></div>
+        </div>
+        <p class="cap">กลไกของผลิตภัณฑ์ที่ครูตรวจและปรับแก้ได้ — ไม่ใช่ตัวชี้วัดผลของโปรเจกต์</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note"><b>เหตุผลที่ MIN/MAX ย้ายเข้าไปในการ์ด:</b> เดิมมันลอยเป็นแถวใหญ่ใต้ทั้ง section ทำให้ดูเหมือน "ผลลัพธ์ของโปรเจกต์" ทั้งที่จริงคือกลไกของขั้นตอนที่ 2 — พอเกาะกับขั้นตอนต้นทาง คนอ่านเข้าใจบทบาทของมันทันทีโดยไม่ต้องพึ่ง caption อย่างเดียว (caption ยังอยู่เป็นตัวกันเข้าใจผิดชั้นที่สอง)</div>
+
+  <!-- 2) Structural effect = ใบเสร็จของการเทียบสองการ์ด -->
+  <div class="struct">
+    <div class="struct-head">STRUCTURAL EFFECT — ผลเชิงโครงสร้างจากการรวม FLOW</div>
+    <div class="struct-grid">
+      <div>
+        <div class="what">เครื่องมือในงานออกเกรด</div>
+        <div class="delta">ระบบ + Excel → ระบบเดียว</div>
+      </div>
+      <div>
+        <div class="what">ขั้นตอนหลักของครู</div>
+        <div class="delta">5 → 4</div>
+      </div>
+      <div>
+        <div class="what">คัดลอกจาก Excel กลับระบบ</div>
+        <div class="delta">→ 0</div>
+      </div>
+    </div>
+    <div class="struct-cap">นับจาก flow ที่ออกแบบ (ฝั่ง as-is เป็น hypothesis จากข้อมูลลูกค้า) ไม่ใช่ผลวัดการใช้งานจริง · สิ่งที่ต้องยืนยันกับฝ่ายวิชาการก่อน production: แหล่งอ้างอิงของสูตร กติกาการปรับช่วงเกรด สิทธิการ override และขั้นตอนอนุมัติ</div>
+  </div>
+
+  <div class="note"><b>ตำแหน่ง:</b> Structural effect อยู่ใต้การ์ดคู่พอดี เพราะตัวเลขของมัน "อ่านออกจากการเทียบสองการ์ดข้างบน" — คนอ่านเพิ่งนับ 5 ขั้นกับ 4 ขั้นด้วยตาตัวเองมา แถบนี้จึงทำหน้าที่เป็นใบเสร็จสรุป ไม่ใช่ข้อมูลใหม่ที่ต้องเชื่อ</div>
+
+  <div class="note"><b>บั๊กเล็กที่เห็นในภาพ Figma:</b> เลขลำดับในการ์ดทั้งสองแสดง "1." ทุกข้อ (auto-number ของ list ไม่รัน) — ฝั่ง as-is ต้องเป็น 1-5 ฝั่ง proposed ต้องเป็น 1-4 เพราะจำนวนขั้นคือหัวใจของ structural claim "5 → 4" ถ้าเลขไม่รัน คนอ่านนับไม่ได้</div>
+</section>
+
+</div>
+</body>
+</html>
