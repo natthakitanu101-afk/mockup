@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACE — Color System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teacher:#CA5D9B;
+    --student:#42B1DC;
+    --parent:#A172FC;
+    --ink:#212121;
+    --body:#424242;
+    --muted:#757575;
+    --line:#E0E0E0;
+    --hairline:#EEEEEE;
+    --page:#FCFCFD;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Prompt',sans-serif;background:var(--page);color:var(--body);line-height:1.65;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'IBM Plex Mono',monospace}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 40px}
+
+  /* masthead */
+  .masthead{padding:72px 0 40px;border-bottom:1px solid var(--ink)}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+  h1{font-size:2.6rem;font-weight:600;color:var(--ink);line-height:1.15;letter-spacing:-.01em}
+  .lede{max-width:640px;margin-top:14px;font-size:1rem;font-weight:300}
+  .meta{display:flex;gap:34px;flex-wrap:wrap;margin-top:30px}
+  .meta div{font-size:.82rem}
+  .meta span{display:block;font-family:'IBM Plex Mono',monospace;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+
+  /* sections */
+  section{padding:64px 0;border-bottom:1px solid var(--hairline)}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:8px}
+  .sec-num{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--muted);letter-spacing:.12em}
+  h2{font-size:1.5rem;font-weight:600;color:var(--ink)}
+  .sec-note{max-width:660px;font-size:.9rem;font-weight:300;margin:0 0 34px 44px}
+
+  /* role columns */
+  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .role{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+  .role-cap{padding:18px 20px 16px;border-bottom:1px solid var(--hairline)}
+  .role-dot{width:26px;height:26px;border-radius:7px;margin-bottom:11px}
+  .role-cap h3{font-size:1.05rem;font-weight:600;color:var(--ink)}
+  .role-cap .use{font-size:.8rem;font-weight:300;color:var(--muted);margin-top:3px;line-height:1.5}
+  .role-cap .base{font-family:'IBM Plex Mono',monospace;font-size:.74rem;color:var(--body);margin-top:10px;display:inline-block;background:var(--hairline);padding:2px 8px;border-radius:4px}
+  .scale{display:flex;flex-direction:column}
+  .sw{display:flex;justify-content:space-between;align-items:center;padding:11px 20px;font-size:.78rem;cursor:pointer;border:0;width:100%;font-family:'IBM Plex Mono',monospace;text-align:left;transition:padding-left .18s ease}
+  .sw:hover{padding-left:26px}
+  .sw:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+  .sw .tone{font-weight:500}
+  .sw .hex{opacity:.82;font-size:.72rem}
+  .role-foot{padding:14px 20px;border-top:1px solid var(--hairline);font-size:.78rem;font-weight:300}
+  .role-foot b{font-weight:500;color:var(--ink)}
+
+  /* strips */
+  .row{display:grid;grid-template-columns:210px 1fr;gap:30px;align-items:start;margin-bottom:26px}
+  .row-label h4{font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:5px}
+  .row-label p{font-size:.82rem;font-weight:300;line-height:1.55}
+  .strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .cell{position:relative;padding:16px 14px;min-height:100px;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;border:0;text-align:left;font-family:'Prompt',sans-serif;border-right:1px solid rgba(0,0,0,.06);transition:transform .18s ease}
+  .cell:last-child{border-right:0}
+  .cell:hover{transform:translateY(-3px)}
+  .cell:focus-visible{outline:2px solid var(--ink);outline-offset:-3px}
+  .cell .nm{font-size:.78rem;font-weight:500;margin-bottom:2px}
+  .cell .hx{font-family:'IBM Plex Mono',monospace;font-size:.68rem;opacity:.78}
+  .cell .role-use{font-size:.68rem;opacity:.72;margin-top:5px;line-height:1.4}
+  .tag{position:absolute;top:9px;right:10px;font-family:'IBM Plex Mono',monospace;font-size:.58rem;background:rgba(255,255,255,.92);color:#212121;padding:2px 7px;border-radius:20px;font-weight:500}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:.86rem;margin-top:6px}
+  th{font-family:'IBM Plex Mono',monospace;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--ink);font-weight:400}
+  td{padding:13px 14px;border-bottom:1px solid var(--hairline);vertical-align:middle}
+  .chip{width:20px;height:20px;border-radius:5px;display:inline-block;vertical-align:-5px;margin-right:9px;border:1px solid rgba(0,0,0,.1)}
+  .ratio{font-family:'IBM Plex Mono',monospace;font-weight:500;color:var(--ink)}
+  .verdict{font-size:.74rem;font-weight:500;padding:3px 11px;border-radius:20px;display:inline-block}
+  .pass{background:#E6F6F1;color:#0F766E}
+  .large{background:#FEF3C7;color:#92400E}
+  .fail{background:#FEE2E2;color:#B91C1C}
+  .callout{margin-top:28px;border-left:3px solid var(--student);background:#F0F9FC;padding:18px 22px;border-radius:0 8px 8px 0}
+  .callout h5{font-size:.94rem;font-weight:600;color:var(--ink);margin-bottom:6px}
+  .callout p{font-size:.86rem;font-weight:300;max-width:780px}
+
+  /* rules */
+  .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .rule{background:#fff;padding:22px}
+  .rule .n{font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--muted);margin-bottom:9px}
+  .rule h5{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:5px}
+  .rule p{font-size:.82rem;font-weight:300}
+
+  footer{padding:44px 0 70px;font-size:.8rem;color:var(--muted);font-weight:300}
+
+  #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:11px 22px;border-radius:30px;font-family:'IBM Plex Mono',monospace;font-size:.8rem;opacity:0;transition:opacity .22s ease,transform .22s ease;pointer-events:none;z-index:50}
+  #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+  @media(max-width:900px){
+    .wrap{padding:0 24px}
+    .roles{grid-template-columns:1fr}
+    .row{grid-template-columns:1fr;gap:14px}
+    h1{font-size:2rem}
+    .sec-note{margin-left:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">ACE · School Operations Platform</div>
+    <h1>Color System</h1>
+    <p class="lede">ระบบสีแบ่งตามบทบาทผู้ใช้ — ครู นักเรียน และผู้ปกครอง ใช้ component ชุดเดียวกันทั้งหมด สีทำหน้าที่บอกว่ากำลังอยู่ในพื้นที่ของใคร ไม่เปลี่ยนวิธีใช้งาน</p>
+    <div class="meta">
+      <div><span>Typeface</span>Prompt</div>
+      <div><span>Roles</span>Teacher · Student · Parent</div>
+      <div><span>Contrast</span>WCAG 2.1 AA</div>
+      <div><span>Platform</span>Web · Mobile</div>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">01</span><h2>Role primaries</h2></div>
+    <p class="sec-note">สีหลักสามชุดที่แยกพื้นที่ของแต่ละบทบาทออกจากกัน ใช้กับ navigation, header, ปุ่มหลัก และ accent ของหน้านั้น · คลิกแถบสีเพื่อคัดลอกค่า</p>
+    <div class="roles">
+
+      <div class="role">
+        <div class="role-cap">
+          <div class="role-dot" style="background:#CA5D9B"></div>
+          <h3>Teacher</h3>
+          <p class="use">พื้นที่งานประจำวันของครู — เช็กชื่อ ออกเกรด เอกสาร</p>
+          <div class="base mono">Base · #CA5D9B</div>
+        </div>
+        <div class="scale">
+          <button class="sw" style="background:#FBF2F7;color:#8D416C" data-hex="#FBF2F7"><span class="tone">50</span><span class="hex">#FBF2F7</span></button>
+          <button class="sw" style="background:#F6E5EF;color:#8D416C" data-hex="#F6E5EF"><span class="tone">100</span><span class="hex">#F6E5EF</span></button>
+          <button class="sw" style="background:#EECBDF;color:#8D416C" data-hex="#EECBDF"><span class="tone">200</span><span class="hex">#EECBDF</span></button>
+          <button class="sw" style="background:#E3ABCB;color:#5E2B48" data-hex="#E3ABCB"><span class="tone">300</span><span class="hex">#E3ABCB</span></button>
+          <button class="sw" style="background:#D784B3;color:#000" data-hex="#D784B3"><span class="tone">400</span><span class="hex">#D784B3</span></button>
+          <button class="sw" style="background:#CA5D9B;color:#000" data-hex="#CA5D9B"><span class="tone">500 · base</span><span class="hex">#CA5D9B</span></button>
+          <button class="sw" style="background:#AC4F84;color:#fff" data-hex="#AC4F84"><span class="tone">600</span><span class="hex">#AC4F84</span></button>
+          <button class="sw" style="background:#8D416C;color:#fff" data-hex="#8D416C"><span class="tone">700</span><span class="hex">#8D416C</span></button>
+        </div>
+        <div class="role-foot">ข้อความบนสี base: <b>ใช้สีดำ</b> · ตัวอักษรขาวใช้ได้เฉพาะขนาดใหญ่</div>
+      </div>
+
+      <div class="role">
+        <div class="role-cap">
+          <div class="role-dot" style="background:#42B1DC"></div>
+          <h3>Student</h3>
+          <p class="use">พื้นที่ของนักเรียน — ผลการเรียน เอกสาร คำขอ</p>
+          <div class="base mono">Base · #42B1DC</div>
+        </div>
+        <div class="scale">
+          <button class="sw" style="background:#F0F9FC;color:#235E75" data-hex="#F0F9FC"><span class="tone">50</span><span class="hex">#F0F9FC</span></button>
+          <button class="sw" style="background:#E1F3F9;color:#235E75" data-hex="#E1F3F9"><span class="tone">100</span><span class="hex">#E1F3F9</span></button>
+          <button class="sw" style="background:#C3E6F4;color:#235E75" data-hex="#C3E6F4"><span class="tone">200</span><span class="hex">#C3E6F4</span></button>
+          <button class="sw" style="background:#9DD6ED;color:#1F5468" data-hex="#9DD6ED"><span class="tone">300</span><span class="hex">#9DD6ED</span></button>
+          <button class="sw" style="background:#6FC4E4;color:#000" data-hex="#6FC4E4"><span class="tone">400</span><span class="hex">#6FC4E4</span></button>
+          <button class="sw" style="background:#42B1DC;color:#000" data-hex="#42B1DC"><span class="tone">500 · base</span><span class="hex">#42B1DC</span></button>
+          <button class="sw" style="background:#3896BB;color:#000" data-hex="#3896BB"><span class="tone">600</span><span class="hex">#3896BB</span></button>
+          <button class="sw" style="background:#2E7C9A;color:#fff" data-hex="#2E7C9A"><span class="tone">700</span><span class="hex">#2E7C9A</span></button>
+        </div>
+        <div class="role-foot">ข้อความบนสี base: <b>ใช้สีดำเท่านั้น</b> — ตัวอักษรขาวไม่ผ่านเกณฑ์ (ดูหัวข้อ 04)</div>
+      </div>
+
+      <div class="role">
+        <div class="role-cap">
+          <div class="role-dot" style="background:#A172FC"></div>
+          <h3>Parent · Shared</h3>
+          <p class="use">พื้นที่ผู้ปกครอง และองค์ประกอบที่ทุกบทบาทใช้ร่วมกัน</p>
+          <div class="base mono">Base · #A172FC</div>
+        </div>
+        <div class="scale">
+          <button class="sw" style="background:#F8F4FF;color:#7150B0" data-hex="#F8F4FF"><span class="tone">50</span><span class="hex">#F8F4FF</span></button>
+          <button class="sw" style="background:#F0E8FF;color:#7150B0" data-hex="#F0E8FF"><span class="tone">100</span><span class="hex">#F0E8FF</span></button>
+          <button class="sw" style="background:#E1D2FE;color:#5D3F96" data-hex="#E1D2FE"><span class="tone">200</span><span class="hex">#E1D2FE</span></button>
+          <button class="sw" style="background:#CEB6FD;color:#4A3475" data-hex="#CEB6FD"><span class="tone">300</span><span class="hex">#CEB6FD</span></button>
+          <button class="sw" style="background:#B894FD;color:#000" data-hex="#B894FD"><span class="tone">400</span><span class="hex">#B894FD</span></button>
+          <button class="sw" style="background:#A172FC;color:#000" data-hex="#A172FC"><span class="tone">500 · base</span><span class="hex">#A172FC</span></button>
+          <button class="sw" style="background:#8961D6;color:#000" data-hex="#8961D6"><span class="tone">600</span><span class="hex">#8961D6</span></button>
+          <button class="sw" style="background:#7150B0;color:#fff" data-hex="#7150B0"><span class="tone">700</span><span class="hex">#7150B0</span></button>
+        </div>
+        <div class="role-foot">ข้อความบนสี base: <b>ใช้สีดำ</b> · โทน 700 รองรับตัวอักษรขาว</div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">02</span><h2>Foundation</h2></div>
+    <p class="sec-note">สีพื้นฐานที่ทุกบทบาทใช้ร่วมกัน ไม่เปลี่ยนตามพื้นที่ผู้ใช้ — พื้นหลัง เส้นคั่น ลำดับของตัวอักษร และสถานะปิดใช้งาน</p>
+
+    <div class="row">
+      <div class="row-label">
+        <h4>Neutral</h4>
+        <p>ใช้กับพื้นหลัง ตาราง เส้นแบ่ง และตัวอักษร · Warm-50 ใช้เป็นพื้นหลัง section ที่มีตารางข้อมูลหนาแน่น เพื่อลดความแข็งของหน้า</p>
+      </div>
+      <div class="strip">
+        <button class="cell" style="background:#FFFFFF;color:#212121;box-shadow:inset 0 0 0 1px #EEE" data-hex="#FFFFFF"><span class="nm">White</span><span class="hx">#FFFFFF</span><span class="role-use">พื้นหลังหลัก, การ์ด</span></button>
+        <button class="cell" style="background:#FAF3ED;color:#212121" data-hex="#FAF3ED"><span class="nm">Warm-50</span><span class="hx">#FAF3ED</span><span class="role-use">พื้นหลัง section</span></button>
+        <button class="cell" style="background:#FAFAFA;color:#212121" data-hex="#FAFAFA"><span class="nm">Gray-50</span><span class="hx">#FAFAFA</span><span class="role-use">พื้นหลังรอง</span></button>
+        <button class="cell" style="background:#F5F5F5;color:#212121" data-hex="#F5F5F5"><span class="nm">Gray-100</span><span class="hx">#F5F5F5</span><span class="role-use">พื้นช่องกรอก</span></button>
+        <button class="cell" style="background:#EEEEEE;color:#212121" data-hex="#EEEEEE"><span class="nm">Gray-200</span><span class="hx">#EEEEEE</span><span class="role-use">เส้นแบ่ง</span></button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="row-label"></div>
+      <div class="strip">
+        <button class="cell" style="background:#E0E0E0;color:#212121" data-hex="#E0E0E0"><span class="nm">Gray-300</span><span class="hx">#E0E0E0</span><span class="role-use">ขอบ</span></button>
+        <button class="cell" style="background:#BDBDBD;color:#212121" data-hex="#BDBDBD"><span class="nm">Gray-400</span><span class="hx">#BDBDBD</span><span class="role-use">ไอคอนปิดใช้งาน</span></button>
+        <button class="cell" style="background:#9E9E9E;color:#000" data-hex="#9E9E9E"><span class="nm">Gray-500</span><span class="hx">#9E9E9E</span><span class="role-use">ข้อความตัวอย่าง</span></button>
+        <button class="cell" style="background:#757575;color:#fff" data-hex="#757575"><span class="tag">AA text</span><span class="nm">Gray-600</span><span class="hx">#757575</span><span class="role-use">ข้อความรอง</span></button>
+        <button class="cell" style="background:#424242;color:#fff" data-hex="#424242"><span class="tag">AAA</span><span class="nm">Gray-800</span><span class="hx">#424242</span><span class="role-use">ข้อความหลัก</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">03</span><h2>Semantic</h2></div>
+    <p class="sec-note">สีบอกสถานะของงาน ใช้เหมือนกันทุกบทบาท เพื่อให้ครู นักเรียน และผู้ปกครองอ่านสถานะเดียวกันได้ตรงกัน</p>
+
+    <div class="row">
+      <div class="row-label">
+        <h4 style="color:#CC0000">Error</h4>
+        <p>บันทึกไม่สำเร็จ ข้อมูลไม่ครบ หรือกรอกคะแนนเกินเกณฑ์ที่กำหนด</p>
+      </div>
+      <div class="strip">
+        <button class="cell" style="background:#FFF5F5;color:#7A0000" data-hex="#FFF5F5"><span class="nm">Red-50</span><span class="hx">#FFF5F5</span><span class="role-use">พื้นหลังแจ้งเตือน</span></button>
+        <button class="cell" style="background:#FFCCCC;color:#7A0000" data-hex="#FFCCCC"><span class="nm">Red-100</span><span class="hx">#FFCCCC</span><span class="role-use">ขอบช่องที่กรอกผิด</span></button>
+        <button class="cell" style="background:#FF6666;color:#000" data-hex="#FF6666"><span class="nm">Red-300</span><span class="hx">#FF6666</span><span class="role-use">ไอคอน</span></button>
+        <button class="cell" style="background:#CC0000;color:#fff" data-hex="#CC0000"><span class="tag">Base</span><span class="nm">Red-500</span><span class="hx">#CC0000</span><span class="role-use">ข้อความแจ้งข้อผิดพลาด</span></button>
+        <button class="cell" style="background:#7A0000;color:#fff" data-hex="#7A0000"><span class="nm">Red-700</span><span class="hx">#7A0000</span><span class="role-use">ปุ่มยืนยันการลบ</span></button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="row-label">
+        <h4 style="color:#B45309">Warning</h4>
+        <p>คำขอเอกสารรอตรวจ เกรดที่ยังไม่ยืนยัน และรายการที่ใกล้ถึงกำหนดส่ง</p>
+      </div>
+      <div class="strip">
+        <button class="cell" style="background:#FFFBEB;color:#B45309" data-hex="#FFFBEB"><span class="nm">Amber-50</span><span class="hx">#FFFBEB</span><span class="role-use">พื้นหลังแถบสถานะ</span></button>
+        <button class="cell" style="background:#FEF3C7;color:#B45309" data-hex="#FEF3C7"><span class="nm">Amber-100</span><span class="hx">#FEF3C7</span><span class="role-use">ป้ายรอดำเนินการ</span></button>
+        <button class="cell" style="background:#FCD34D;color:#000" data-hex="#FCD34D"><span class="nm">Amber-300</span><span class="hx">#FCD34D</span><span class="role-use">จุดแจ้งเตือน</span></button>
+        <button class="cell" style="background:#F59E0B;color:#000" data-hex="#F59E0B"><span class="tag">Base</span><span class="nm">Amber-500</span><span class="hx">#F59E0B</span><span class="role-use">ไอคอนสถานะรอ</span></button>
+        <button class="cell" style="background:#B45309;color:#fff" data-hex="#B45309"><span class="nm">Amber-700</span><span class="hx">#B45309</span><span class="role-use">ข้อความบนพื้นอ่อน</span></button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="row-label">
+        <h4 style="color:#0F766E">Success</h4>
+        <p>เผยแพร่เกรดสำเร็จ บันทึกการเช็กชื่อครบ และคำขอที่อนุมัติแล้ว · ใช้โทน teal เพื่อแยกจากสีฟ้าของนักเรียน ไม่ให้สถานะปนกับสีบทบาท</p>
+      </div>
+      <div class="strip">
+        <button class="cell" style="background:#F0FDFA;color:#0F766E" data-hex="#F0FDFA"><span class="nm">Teal-50</span><span class="hx">#F0FDFA</span><span class="role-use">พื้นหลังยืนยันผล</span></button>
+        <button class="cell" style="background:#CCFBF1;color:#0F766E" data-hex="#CCFBF1"><span class="nm">Teal-100</span><span class="hx">#CCFBF1</span><span class="role-use">ป้ายเผยแพร่แล้ว</span></button>
+        <button class="cell" style="background:#5EEAD4;color:#000" data-hex="#5EEAD4"><span class="nm">Teal-300</span><span class="hx">#5EEAD4</span><span class="role-use">ไอคอนสำเร็จ</span></button>
+        <button class="cell" style="background:#14B8A6;color:#000" data-hex="#14B8A6"><span class="tag">Base</span><span class="nm">Teal-500</span><span class="hx">#14B8A6</span><span class="role-use">แถบยืนยัน</span></button>
+        <button class="cell" style="background:#0F766E;color:#fff" data-hex="#0F766E"><span class="nm">Teal-700</span><span class="hx">#0F766E</span><span class="role-use">ข้อความสถานะสำเร็จ</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">04</span><h2>Contrast check</h2></div>
+    <p class="sec-note">ตรวจคู่สีข้อความบนสีหลักของแต่ละบทบาท เกณฑ์ข้อความปกติ 4.5:1 และข้อความขนาดใหญ่ 3:1 — ผลการตรวจใช้กำหนดกติกาการใช้ตัวอักษร โดยไม่เปลี่ยนค่า token</p>
+    <table>
+      <thead><tr><th>คู่สี</th><th>ข้อความ</th><th>พื้นหลัง</th><th>อัตราส่วน</th><th>WCAG AA</th></tr></thead>
+      <tbody>
+        <tr><td><span class="chip" style="background:#42B1DC"></span>ดำ บน Student</td><td class="mono">#000000</td><td class="mono">#42B1DC</td><td class="ratio">8.55:1</td><td><span class="verdict pass">ผ่าน</span></td></tr>
+        <tr><td><span class="chip" style="background:#42B1DC"></span>ขาว บน Student</td><td class="mono">#FFFFFF</td><td class="mono">#42B1DC</td><td class="ratio">2.46:1</td><td><span class="verdict fail">ไม่ผ่าน</span></td></tr>
+        <tr><td><span class="chip" style="background:#CA5D9B"></span>ดำ บน Teacher</td><td class="mono">#000000</td><td class="mono">#CA5D9B</td><td class="ratio">5.55:1</td><td><span class="verdict pass">ผ่าน</span></td></tr>
+        <tr><td><span class="chip" style="background:#CA5D9B"></span>ขาว บน Teacher</td><td class="mono">#FFFFFF</td><td class="mono">#CA5D9B</td><td class="ratio">3.78:1</td><td><span class="verdict large">เฉพาะข้อความใหญ่</span></td></tr>
+        <tr><td><span class="chip" style="background:#A172FC"></span>ดำ บน Parent · Shared</td><td class="mono">#000000</td><td class="mono">#A172FC</td><td class="ratio">6.33:1</td><td><span class="verdict pass">ผ่าน</span></td></tr>
+        <tr><td><span class="chip" style="background:#000000"></span>ขาว บน ดำ</td><td class="mono">#FFFFFF</td><td class="mono">#000000</td><td class="ratio">21.00:1</td><td><span class="verdict pass">ผ่าน</span></td></tr>
+      </tbody>
+    </table>
+    <div class="callout">
+      <h5>สิ่งที่พบและวิธีรับมือ</h5>
+      <p>ตัวอักษรสีขาวบนสีหลักของนักเรียน (#42B1DC) ได้ค่า 2.46:1 ซึ่งต่ำกว่าเกณฑ์ AA จึงกำหนดเป็นกติกาว่าข้อความบนสีนี้ใช้สีดำเท่านั้น และเมื่อจำเป็นต้องใช้ตัวอักษรขาวให้เปลี่ยนไปใช้โทน 700 แทน · กรณีนี้ทำให้ย้ายการตรวจ contrast มาเป็นขั้นตอนหนึ่งของการกำหนด token ตั้งแต่ต้น แทนการตรวจหลังออกแบบหน้าจอเสร็จ</p>
+    </div>
+  </section>
+
+  <section style="border-bottom:0">
+    <div class="sec-head"><span class="sec-num">05</span><h2>กติกาการใช้งาน</h2></div>
+    <p class="sec-note">ข้อตกลงที่ทำให้ระบบขยายต่อได้โดยไม่แตกเป็นคนละผลิตภัณฑ์</p>
+    <div class="rules">
+      <div class="rule">
+        <div class="n">01</div>
+        <h5>สีบอกบริบท ไม่บอกวิธีใช้</h5>
+        <p>component ทุกตัวทำงานเหมือนกันทุกบทบาท เปลี่ยนแค่สีประจำพื้นที่ ผู้ใช้ที่ข้ามบทบาทจึงไม่ต้องเรียนรู้ใหม่</p>
+      </div>
+      <div class="rule">
+        <div class="n">02</div>
+        <h5>สถานะไม่ยืมสีบทบาท</h5>
+        <p>Error, Warning, Success ใช้ชุดสีของตัวเองเสมอ เพื่อไม่ให้อ่านสับสนระหว่าง “อยู่พื้นที่ใคร” กับ “สถานะเป็นอะไร”</p>
+      </div>
+      <div class="rule">
+        <div class="n">03</div>
+        <h5>ตรวจ contrast ก่อนเลือกโทน</h5>
+        <p>ทุกครั้งที่วางข้อความบนพื้นสี ตรวจค่าตามตารางหัวข้อ 04 ก่อน หากไม่ผ่านให้เปลี่ยนโทน ไม่ใช่เลี่ยงด้วยการขยายขนาดตัวอักษร</p>
+      </div>
+      <div class="rule">
+        <div class="n">04</div>
+        <h5>Neutral คือโครง สีคือป้าย</h5>
+        <p>โครงสร้างหน้าวางบน neutral ทั้งหมด สีประจำบทบาทใช้เท่าที่จำเป็นเพื่อบอกตำแหน่ง ไม่ระบายทั้งหน้า</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>ACE Design System · Color · สิงหาคม 2569</footer>
+</div>
+
+<div id="toast">คัดลอกแล้ว</div>
+
+<script>
+  const toast = document.getElementById('toast');
+  let timer;
+  function flash(msg){
+    toast.textContent = msg;
+    toast.classList.add('on');
+    clearTimeout(timer);
+    timer = setTimeout(function(){ toast.classList.remove('on'); }, 1400);
+  }
+  document.querySelectorAll('[data-hex]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var hex = el.dataset.hex;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(hex).then(function(){ flash('คัดลอก ' + hex); })
+          .catch(function(){ flash(hex); });
+      } else {
+        flash(hex);
+      }
+    });
+  });
+</script>
+</body>
+</html>
